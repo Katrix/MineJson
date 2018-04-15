@@ -45,6 +45,7 @@ lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(
     sharedSettings,
+    publishSettings,
     name := "minejson",
     libraryDependencies += "net.katsstuff" %%% "typenbt"      % "0.3",
     libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
@@ -57,7 +58,7 @@ lazy val minejsonBaseJS  = minejsonBase.js
 
 lazy val minejsonGenerator = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
-  .settings(sharedSettings, name := "minejson-generator")
+  .settings(sharedSettings, publishSettings, name := "minejson-generator")
   .dependsOn(minejsonBase)
 
 lazy val minejsonGeneratorJVM = minejsonGenerator.jvm
@@ -67,4 +68,11 @@ lazy val minejsonRoot =
   project
     .in(file("."))
     .aggregate(minejsonBaseJVM, minejsonBaseJS, minejsonGeneratorJVM, minejsonGeneratorJS)
-    .settings(noPublishSettings)
+    .settings(
+      noPublishSettings,
+      publishTo := {
+        val nexus = "https://oss.sonatype.org/"
+        if (isSnapshot.value) Some("snapshots" at nexus + "content/repositories/snapshots")
+        else Some("releases" at nexus + "service/local/staging/deploy/maven2")
+      }
+    )
