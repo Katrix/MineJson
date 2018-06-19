@@ -50,7 +50,8 @@ lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies += "net.katsstuff" %%% "typenbt"      % "0.3",
     libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
     libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.9.3"
+    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.9.3",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
   )
 
 lazy val minejsonBaseJVM = minejsonBase.jvm
