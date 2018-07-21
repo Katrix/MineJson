@@ -41,18 +41,30 @@ lazy val publishSettings = Seq(
 
 lazy val noPublishSettings = Seq(publish := {}, publishLocal := {}, publishArtifact := false)
 
-lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
+lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(
     sharedSettings,
     publishSettings,
-    name := "minejson",
+    name := "minejson-text",
     libraryDependencies += "net.katsstuff" %%% "typenbt"      % "0.3",
     libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
     libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
     libraryDependencies += "io.circe"      %%% "circe-parser" % "0.9.3",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
   )
+
+lazy val minejsonTextJVM = minejsonText.jvm
+lazy val minejsonTextJS  = minejsonText.js
+
+lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(
+    sharedSettings,
+    publishSettings,
+    name := "minejson"
+  )
+  .dependsOn(minejsonText)
 
 lazy val minejsonBaseJVM = minejsonBase.jvm
 lazy val minejsonBaseJS  = minejsonBase.js
