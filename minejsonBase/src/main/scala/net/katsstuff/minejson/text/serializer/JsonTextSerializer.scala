@@ -136,15 +136,15 @@ object JsonTextSerializer extends TextSerializer {
     }
   }
 
-  implicit val hoverActionEncoder: Encoder[HoverAction] = {
-    case HoverAction.ShowText(text) => Json.obj("action" := "show_text", "value" := text)
-    case HoverAction.ShowItem(nbt) =>
+  implicit val hoverActionEncoder: Encoder[HoverText] = {
+    case HoverText.ShowText(text) => Json.obj("action" := "show_text", "value" := text)
+    case HoverText.ShowItem(nbt) =>
       Json.obj("action" := "show_item", "value" := Mojangson.toMojangson(nbt))
-    case HoverAction.ShowEntity(nbt) =>
+    case HoverText.ShowEntity(nbt) =>
       Json.obj("action" := "show_entity", "value" := Mojangson.toMojangson(nbt))
   }
 
-  implicit val hoverActionDecoder: Decoder[HoverAction] = (c: HCursor) => {
+  implicit val hoverActionDecoder: Decoder[HoverText] = (c: HCursor) => {
     def nbtValue =
       c.get[String]("value")
         .flatMap(s => Mojangson.fromMojangson(s).left.map(e => DecodingFailure(e, c.downField("value").history)))
@@ -160,9 +160,9 @@ object JsonTextSerializer extends TextSerializer {
         }
 
     c.get[String]("action").flatMap {
-      case "show_text"   => c.get[Text]("value").map(HoverAction.ShowText)
-      case "show_item"   => nbtValue.map(HoverAction.ShowItem)
-      case "show_entity" => nbtValue.map(HoverAction.ShowItem)
+      case "show_text"   => c.get[Text]("value").map(HoverText.ShowText)
+      case "show_item"   => nbtValue.map(HoverText.ShowItem)
+      case "show_entity" => nbtValue.map(HoverText.ShowItem)
       case other         => Left(DecodingFailure(s"$other is not a valid hover action", c.downField("action").history))
     }
   }
@@ -177,9 +177,9 @@ object JsonTextSerializer extends TextSerializer {
     val italic        = format.style.styles.get(TextStyle.Italic)
     val strikeThrough = format.style.styles.get(TextStyle.StrikeThrough)
     val obfuscated    = format.style.styles.get(TextStyle.Obfuscated)
-    val insertion     = text.onShiftClick
-    val clickAction   = text.onClick
-    val hoverAction   = text.onHover
+    val insertion     = text.insertionText
+    val clickAction   = text.clickAction
+    val hoverAction   = text.hoverText
     extra ++ Seq(
       "color" := color,
       "bold" := bold,
@@ -203,16 +203,16 @@ object JsonTextSerializer extends TextSerializer {
       obfuscated    <- c.get[Option[Boolean]]("obfuscated").map(TextStyle.Obfuscated -> _)
       insertion     <- c.get[Option[String]]("insertion").map(_.map(ShiftClickAction.Insertion))
       clickEvent    <- c.get[Option[ClickAction]]("clickEvent")
-      hoverEvent    <- c.get[Option[HoverAction]]("hoverAction")
+      hoverEvent    <- c.get[Option[HoverText]]("hoverAction")
       children      <- c.get[Option[Seq[Text]]]("extra").map(_.getOrElse(Nil))
 
     } yield {
       val compositeTextStyle = CompositeTextStyle.fromOptions(Seq(bold, underlined, italic, strikeThrough, obfuscated))
       text.copyBase(
         format = TextFormat(color, compositeTextStyle),
-        onShiftClick = insertion,
-        onClick = clickEvent,
-        onHover = hoverEvent,
+        insertionText = insertion,
+        clickAction = clickEvent,
+        hoverText = hoverEvent,
         children = children
       )
     }

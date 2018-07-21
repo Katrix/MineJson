@@ -31,25 +31,27 @@ import net.katsstuff.minejson.text.serializer.{FormattingCodeSerializer, JsonTex
 //Partially taken from Sponge's Text
 sealed trait Text {
   def format: TextFormat
-  def format_=(format: TextFormat): Text = copyBase(format = format)
 
-  def onShiftClick: Option[ShiftClickAction]
-  def onShiftClick_=(action: Option[ShiftClickAction]): Text = copyBase(onShiftClick = action)
-  def onShiftClick_=(action: ShiftClickAction):         Text = this.onShiftClick = Some(action)
+  def insertionText: Option[String]
 
-  def onClick: Option[ClickAction]
-  def onClick_=(action: Option[ClickAction]): Text = copyBase(onClick = action)
-  def onClick_=(action: ClickAction):         Text = this.onClick = Some(action)
+  def noInsertion:               Text = copyBase(insertionText = None)
+  def setInsertion(str: String): Text = copyBase(insertionText = Some(str))
 
-  def onHover: Option[HoverAction]
-  def onHover_=(action: Option[HoverAction]): Text = copyBase(onHover = action)
-  def onHover_=(action: HoverAction):         Text = this.onHover = Some(action)
+  def clickAction: Option[ClickAction]
+
+  def noClickAction:                Text = copyBase(clickAction = None)
+  def onClick(action: ClickAction): Text = copyBase(clickAction = Some(action))
+
+  def hoverText: Option[HoverText]
+
+  def noHoverText:                 Text = copyBase(hoverText = None)
+  def hoverText(hover: HoverText): Text = copyBase(hoverText = Some(hover))
 
   def copyBase(
       format: TextFormat = format,
-      onShiftClick: Option[ShiftClickAction] = onShiftClick,
-      onClick: Option[ClickAction] = onClick,
-      onHover: Option[HoverAction] = onHover,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
       children: Seq[Text] = children
   ): Text
 
@@ -129,9 +131,9 @@ object Text {
       var changedFormat = false
 
       var format = TextFormat.None
-      var onClick:      Option[ClickAction]      = None
-      var onShiftClick: Option[ShiftClickAction] = None
-      var onHover:      Option[HoverAction]      = None
+      var onClick:       Option[ClickAction]   = None
+      var insertionText: Option[InsertionText] = None
+      var hoverText:     Option[HoverText]     = None
       val iterator = anys.iterator
 
       while (iterator.hasNext) {
@@ -150,25 +152,26 @@ object Text {
             format = format.copy(style = format.style.combine(CompositeTextStyle(style)))
           case newOnClick: ClickAction =>
             onClick = Some(newOnClick)
-          case newOnHover: HoverAction =>
-            onHover = Some(newOnHover)
-          case newOnShiftClick: ShiftClickAction =>
-            onShiftClick = Some(newOnShiftClick)
+          case newHover: HoverText =>
+            hoverText = Some(newHover)
+          case newInsertion: InsertionText =>
+            insertionText = Some(newInsertion)
           case child: Text if child == Text.Empty => //Do nothing
           case child: Text =>
             builder.lastOption.flatMap(last => last.merge(child)) match {
               case Some(combined) => builder(builder.size - 1) = combined
               case None =>
-                val childFormat       = format.combine(child.format)
-                val childOnClick      = if (child.onClick.isEmpty) onClick else child.onClick
-                val childOnHover      = if (child.onHover.isEmpty) onHover else child.onHover
-                val childOnShiftClick = if (child.onShiftClick.isEmpty) onShiftClick else child.onShiftClick
+                val childFormat = format.combine(child.format)
+                val childClick  = if (child.clickAction.isEmpty) onClick else child.clickAction
+                val childHover  = if (child.hoverText.isEmpty) hoverText else child.hoverText
+                val childInsertion =
+                  if (child.insertionText.isEmpty) insertionText.map(_.content) else child.insertionText
 
                 val newChild = child.copyBase(
                   format = childFormat,
-                  onClick = childOnClick,
-                  onHover = childOnHover,
-                  onShiftClick = childOnShiftClick
+                  clickAction = childClick,
+                  hoverText = childHover,
+                  insertionText = childInsertion
                 )
 
                 builder.append(newChild)
@@ -180,9 +183,9 @@ object Text {
                   key = key,
                   args = args,
                   format = format,
-                  onClick = onClick,
-                  onHover = onHover,
-                  onShiftClick = onShiftClick
+                  clickAction = onClick,
+                  hoverText = hoverText,
+                  insertionText = insertionText.map(_.content)
                 )
               case Score(name, objective, value) =>
                 ScoreText(
@@ -190,33 +193,33 @@ object Text {
                   objective = objective,
                   value = value,
                   format = format,
-                  onClick = onClick,
-                  onHover = onHover,
-                  onShiftClick = onShiftClick
+                  clickAction = onClick,
+                  hoverText = hoverText,
+                  insertionText = insertionText.map(_.content)
                 )
               case Selector(selector) =>
                 SelectorText(
                   selector = selector,
                   format = format,
-                  onClick = onClick,
-                  onHover = onHover,
-                  onShiftClick = onShiftClick
+                  clickAction = onClick,
+                  hoverText = hoverText,
+                  insertionText = insertionText.map(_.content)
                 )
               case Keybind(key) =>
                 KeybindText(
                   key = key,
                   format = format,
-                  onClick = onClick,
-                  onHover = onHover,
-                  onShiftClick = onShiftClick
+                  clickAction = onClick,
+                  hoverText = hoverText,
+                  insertionText = insertionText.map(_.content)
                 )
               case simple =>
                 LiteralText(
                   content = String.valueOf(simple),
                   format = format,
-                  onClick = onClick,
-                  onHover = onHover,
-                  onShiftClick = onShiftClick
+                  clickAction = onClick,
+                  hoverText = hoverText,
+                  insertionText = insertionText.map(_.content)
                 )
             }
 
@@ -229,8 +232,12 @@ object Text {
       }
 
       if (changedFormat) {
-        val child =
-          Text.Empty.copyBase(onClick = onClick, onHover = onHover, onShiftClick = onShiftClick, format = format)
+        val child = Text.Empty.copyBase(
+          clickAction = onClick,
+          hoverText = hoverText,
+          insertionText = insertionText.map(_.content),
+          format = format
+        )
         builder.append(child)
       }
 
@@ -242,26 +249,31 @@ object Text {
 final case class LiteralText(
     content: String,
     format: TextFormat = TextFormat.None,
-    onShiftClick: Option[ShiftClickAction] = None,
-    onClick: Option[ClickAction] = None,
-    onHover: Option[HoverAction] = None,
+    insertionText: Option[String] = None,
+    clickAction: Option[ClickAction] = None,
+    hoverText: Option[HoverText] = None,
     children: Seq[Text] = Seq()
 ) extends Text {
   override def copyBase(
       format: TextFormat = format,
-      onShiftClick: Option[ShiftClickAction] = onShiftClick,
-      onClick: Option[ClickAction] = onClick,
-      onHover: Option[HoverAction] = onHover,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
       children: Seq[Text] = children
-  ): Text =
-    copy(format = format, onShiftClick = onShiftClick, onClick = onClick, onHover = onHover, children = children)
+  ): Text = copy(
+    format = format,
+    insertionText = insertionText,
+    clickAction = clickAction,
+    hoverText = hoverText,
+    children = children
+  )
 
   override def merge(other: Text): Option[Text] = {
     if (this == Text.Empty) Some(other)
     else if (other == Text.Empty) Some(this)
     else {
       other match {
-        case LiteralText(otherContent, `format`, `onShiftClick`, `onClick`, `onHover`, otherChildren) =>
+        case LiteralText(otherContent, `format`, `insertionText`, `clickAction`, `hoverText`, otherChildren) =>
           if (children.isEmpty) {
             Some(copy(content + otherContent, children = otherChildren))
           } else if (otherChildren.isEmpty) {
@@ -279,19 +291,24 @@ final case class TranslateText(
     key: String,
     args: Seq[AnyRef] = Nil,
     format: TextFormat = TextFormat.None,
-    onShiftClick: Option[ShiftClickAction] = None,
-    onClick: Option[ClickAction] = None,
-    onHover: Option[HoverAction] = None,
+    insertionText: Option[String] = None,
+    clickAction: Option[ClickAction] = None,
+    hoverText: Option[HoverText] = None,
     children: Seq[Text] = Seq()
 ) extends Text {
   override def copyBase(
       format: TextFormat = format,
-      onShiftClick: Option[ShiftClickAction] = onShiftClick,
-      onClick: Option[ClickAction] = onClick,
-      onHover: Option[HoverAction] = onHover,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
       children: Seq[Text] = children
-  ): Text =
-    copy(format = format, onShiftClick = onShiftClick, onClick = onClick, onHover = onHover, children = children)
+  ): Text = copy(
+    format = format,
+    insertionText = insertionText,
+    clickAction = clickAction,
+    hoverText = hoverText,
+    children = children
+  )
 
   override def merge(other: Text): Option[Text] = None
 }
@@ -303,19 +320,24 @@ final case class ScoreText(
     objective: String,
     value: Option[String] = None,
     format: TextFormat = TextFormat.None,
-    onShiftClick: Option[ShiftClickAction] = None,
-    onClick: Option[ClickAction] = None,
-    onHover: Option[HoverAction] = None,
+    insertionText: Option[String] = None,
+    clickAction: Option[ClickAction] = None,
+    hoverText: Option[HoverText] = None,
     children: Seq[Text] = Seq()
 ) extends Text {
   override def copyBase(
       format: TextFormat = format,
-      onShiftClick: Option[ShiftClickAction] = onShiftClick,
-      onClick: Option[ClickAction] = onClick,
-      onHover: Option[HoverAction] = onHover,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
       children: Seq[Text] = children
-  ): Text =
-    copy(format = format, onShiftClick = onShiftClick, onClick = onClick, onHover = onHover, children = children)
+  ): Text = copy(
+    format = format,
+    insertionText = insertionText,
+    clickAction = clickAction,
+    hoverText = hoverText,
+    children = children
+  )
 
   override def merge(other: Text): Option[Text] = None
 }
@@ -325,19 +347,24 @@ case class Selector(selector: String)
 final case class SelectorText(
     selector: String,
     format: TextFormat = TextFormat.None,
-    onShiftClick: Option[ShiftClickAction] = None,
-    onClick: Option[ClickAction] = None,
-    onHover: Option[HoverAction] = None,
+    insertionText: Option[String] = None,
+    clickAction: Option[ClickAction] = None,
+    hoverText: Option[HoverText] = None,
     children: Seq[Text] = Seq()
 ) extends Text {
   override def copyBase(
       format: TextFormat = format,
-      onShiftClick: Option[ShiftClickAction] = onShiftClick,
-      onClick: Option[ClickAction] = onClick,
-      onHover: Option[HoverAction] = onHover,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
       children: Seq[Text] = children
-  ): Text =
-    copy(format = format, onShiftClick = onShiftClick, onClick = onClick, onHover = onHover, children = children)
+  ): Text = copy(
+    format = format,
+    insertionText = insertionText,
+    clickAction = clickAction,
+    hoverText = hoverText,
+    children = children
+  )
 
   override def merge(other: Text): Option[Text] = None
 }
@@ -347,19 +374,24 @@ case class Keybind(key: String)
 final case class KeybindText(
     key: String,
     format: TextFormat = TextFormat.None,
-    onShiftClick: Option[ShiftClickAction] = None,
-    onClick: Option[ClickAction] = None,
-    onHover: Option[HoverAction] = None,
+    insertionText: Option[String] = None,
+    clickAction: Option[ClickAction] = None,
+    hoverText: Option[HoverText] = None,
     children: Seq[Text] = Seq()
 ) extends Text {
   override def copyBase(
       format: TextFormat = format,
-      onShiftClick: Option[ShiftClickAction] = onShiftClick,
-      onClick: Option[ClickAction] = onClick,
-      onHover: Option[HoverAction] = onHover,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
       children: Seq[Text] = children
-  ): Text =
-    copy(format = format, onShiftClick = onShiftClick, onClick = onClick, onHover = onHover, children = children)
+  ): Text = copy(
+    format = format,
+    insertionText = insertionText,
+    clickAction = clickAction,
+    hoverText = hoverText,
+    children = children
+  )
 
   override def merge(other: Text): Option[Text] = None
 }

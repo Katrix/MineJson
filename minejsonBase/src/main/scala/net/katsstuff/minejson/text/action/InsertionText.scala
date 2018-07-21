@@ -23,12 +23,4 @@
  */
 package net.katsstuff.minejson.text.action
 
-import net.katsstuff.minejson.text.Text
-import net.katsstuff.typenbt.NBTCompound
-
-sealed trait HoverAction
-object HoverAction {
-  final case class ShowText(value: Text) extends HoverAction
-  final case class ShowItem(value: NBTCompound) extends HoverAction
-  final case class ShowEntity(value: NBTCompound) extends HoverAction
-}
+case class InsertionText(content: String)

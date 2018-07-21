@@ -32,11 +32,11 @@ package object text {
   val ClickAction: action.ClickAction.type = action.ClickAction
   type ClickAction = action.ClickAction
 
-  val HoverAction: action.HoverAction.type = action.HoverAction
-  type HoverAction = action.HoverAction
+  val HoverText: action.HoverText.type = action.HoverText
+  type HoverText = action.HoverText
 
-  val ShiftClickAction: action.ShiftClickAction.type = action.ShiftClickAction
-  type ShiftClickAction = action.ShiftClickAction
+  val InsertionText: action.InsertionText.type = action.InsertionText
+  type InsertionText = action.InsertionText
 
   //Format
 

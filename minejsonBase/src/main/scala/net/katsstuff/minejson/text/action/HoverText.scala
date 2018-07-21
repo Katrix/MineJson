@@ -23,7 +23,12 @@
  */
 package net.katsstuff.minejson.text.action
 
-sealed trait ShiftClickAction
-object ShiftClickAction {
-  final case class Insertion(content: String) extends ShiftClickAction
+import net.katsstuff.minejson.text.Text
+import net.katsstuff.typenbt.NBTCompound
+
+sealed trait HoverText
+object HoverText {
+  final case class ShowText(value: Text) extends HoverText
+  final case class ShowItem(value: NBTCompound) extends HoverText
+  final case class ShowEntity(value: NBTCompound) extends HoverText
 }
