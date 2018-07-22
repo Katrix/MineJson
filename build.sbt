@@ -2,7 +2,7 @@ import sbtcrossproject.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "net.katsstuff",
-  version := "0.1",
+  version := "0.2-SNAPSHOT",
   scalaVersion := "2.12.5",
   scalacOptions ++= Seq(
     "-deprecation",
@@ -61,11 +61,7 @@ lazy val minejsonTextJS  = minejsonText.js
 
 lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
-  .settings(
-    sharedSettings,
-    publishSettings,
-    name := "minejson"
-  )
+  .settings(sharedSettings, publishSettings, name := "minejson")
   .dependsOn(minejsonText)
 
 lazy val minejsonBaseJVM = minejsonBase.jvm
@@ -82,7 +78,14 @@ lazy val minejsonGeneratorJS  = minejsonGenerator.js
 lazy val minejsonRoot =
   project
     .in(file("."))
-    .aggregate(minejsonBaseJVM, minejsonBaseJS, minejsonGeneratorJVM, minejsonGeneratorJS)
+    .aggregate(
+      minejsonTextJVM,
+      minejsonTextJS,
+      minejsonBaseJVM,
+      minejsonBaseJS,
+      minejsonGeneratorJVM,
+      minejsonGeneratorJS
+    )
     .settings(
       noPublishSettings,
       publishTo := {
