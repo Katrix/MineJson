@@ -181,5 +181,5 @@ case class SetNbt(tag: NBTCompound) extends LootFunction {
 }
 object SetNbt {
   implicit val encoder: Encoder[SetNbt] = (a: SetNbt) =>
-    Json.obj("function" := "set_nbt", "tag" := Mojangson.toMojangson(a.tag))
+    Json.obj("function" := "set_nbt", "tag" := Mojangson.serialize(a.tag))
 }

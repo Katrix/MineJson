@@ -139,15 +139,21 @@ object JsonTextSerializer extends TextSerializer {
   implicit val hoverActionEncoder: Encoder[HoverText] = {
     case HoverText.ShowText(text) => Json.obj("action" := "show_text", "value" := text)
     case HoverText.ShowItem(nbt) =>
-      Json.obj("action" := "show_item", "value" := Mojangson.toMojangson(nbt))
+      Json.obj("action" := "show_item", "value" := Mojangson.serialize(nbt))
     case HoverText.ShowEntity(nbt) =>
-      Json.obj("action" := "show_entity", "value" := Mojangson.toMojangson(nbt))
+      Json.obj("action" := "show_entity", "value" := Mojangson.serialize(nbt))
   }
 
   implicit val hoverActionDecoder: Decoder[HoverText] = (c: HCursor) => {
     def nbtValue =
       c.get[String]("value")
-        .flatMap(s => Mojangson.fromMojangson(s).left.map(e => DecodingFailure(e, c.downField("value").history)))
+        .flatMap { s =>
+          //TODO: Simple deserialize method returning unit
+          Either
+            .catchNonFatal(Mojangson.deserialize(s).get)
+            .leftMap(e => DecodingFailure(e.getMessage, c.downField("value").history))
+            .map(_.value)
+        }
         .flatMap {
           case compound: NBTCompound => Right(compound)
           case other =>

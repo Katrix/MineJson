@@ -12,7 +12,8 @@ lazy val sharedSettings = Seq(
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-unused-import"
-  )
+  ),
+  resolvers += Resolver.sonatypeRepo("snapshots"),
 )
 
 lazy val publishSettings = Seq(
@@ -47,11 +48,12 @@ lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
     sharedSettings,
     publishSettings,
     name := "minejson-text",
-    libraryDependencies += "net.katsstuff" %%% "typenbt"      % "0.3",
-    libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-core"   % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.9.3",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
+    libraryDependencies += "net.katsstuff" %%% "typenbt"           % "0.4-SNAPSHOT",
+    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.4-SNAPSHOT",
+    libraryDependencies += "io.circe"      %%% "circe-core"        % "0.9.3",
+    libraryDependencies += "io.circe"      %%% "circe-core"        % "0.9.3",
+    libraryDependencies += "io.circe"      %%% "circe-parser"      % "0.9.3",
+    libraryDependencies += "org.scalatest" %% "scalatest"          % "3.0.4" % Test
   )
 
 lazy val minejsonTextJVM = minejsonText.jvm

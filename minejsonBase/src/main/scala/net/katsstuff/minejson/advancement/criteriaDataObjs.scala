@@ -48,7 +48,7 @@ object Item {
         Json.obj("enhancement" := enhancement.enchantment, "levels" := enhancement.levels)
       },
       "item"   := a.item,
-      "nbt"    := a.nbt.map(Mojangson.toMojangson),
+      "nbt"    := a.nbt.map(Mojangson.serialize),
       "potion" := a.potion
   )
 }
@@ -68,7 +68,7 @@ object Entity {
       "distance" := a.distance,
       "effects"  := a.effects.map(e => e.name.toString := e).toMap,
       "location" := a.location,
-      "nbt"      := a.nbt.map(Mojangson.toMojangson),
+      "nbt"      := a.nbt.map(Mojangson.serialize),
       "type"     := a.tpe
     )
   }

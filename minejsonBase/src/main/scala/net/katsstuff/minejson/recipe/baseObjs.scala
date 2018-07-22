@@ -261,7 +261,7 @@ object ItemNbtRecipeIngredient {
       "type" := "minecraft:item_nbt",
       "item" := a.item,
       "data" := a.data,
-      "nbt" := a.nbt.map(Mojangson.toMojangson),
+      "nbt" := a.nbt.map(Mojangson.serialize),
       "tag" := a.tag
   )
 }
