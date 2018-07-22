@@ -114,8 +114,8 @@ object JsonTextSerializer extends TextSerializer {
     }
   }
 
-  implicit val shiftClickActionEncoder: Encoder[ShiftClickAction] = {
-    case ShiftClickAction.Insertion(insert) => insert.asJson
+  implicit val shiftClickActionEncoder: Encoder[InsertionText] = {
+    case InsertionText(insert) => insert.asJson
   }
 
   implicit val clickActionEncoder: Encoder[ClickAction] = {
@@ -201,7 +201,7 @@ object JsonTextSerializer extends TextSerializer {
       italic        <- c.get[Option[Boolean]]("italic").map(TextStyle.Italic -> _)
       strikeThrough <- c.get[Option[Boolean]]("strikethrough").map(TextStyle.StrikeThrough -> _)
       obfuscated    <- c.get[Option[Boolean]]("obfuscated").map(TextStyle.Obfuscated -> _)
-      insertion     <- c.get[Option[String]]("insertion").map(_.map(ShiftClickAction.Insertion))
+      insertion     <- c.get[Option[String]]("insertion")
       clickEvent    <- c.get[Option[ClickAction]]("clickEvent")
       hoverEvent    <- c.get[Option[HoverText]]("hoverAction")
       children      <- c.get[Option[Seq[Text]]]("extra").map(_.getOrElse(Nil))
