@@ -45,7 +45,7 @@ class TextSpec extends FunSuite with Matchers {
 
   test("Text with no children should remain unchanged") {
     val text = Text(Red, "Foo")
-    text.optimize should equal(text)
+    text.compact should equal(text)
   }
 
   test("Two texts with the same format should be mergeable") {
@@ -53,13 +53,13 @@ class TextSpec extends FunSuite with Matchers {
     merged should contain(Text(Red, "FooBar"))
   }
 
-  test("Text with a single child should be optimized") {
+  test("Text with a single child should be compacted") {
     val text = Text(Red, "Foo", Text(Red, "Bar"))
-    text.optimize should equal(Text(Red, "FooBar"))
+    text.compact should equal(Text(Red, "FooBar"))
   }
 
-  test("A text with formatting and two literal children should be optimizable") {
-    Text(Red, Text("Foo"), Text("Bar")).optimize should equal(LiteralText("FooBar", format = TextFormat(Red)))
+  test("A text with formatting and two literal children should be compactable") {
+    Text(Red, Text("Foo"), Text("Bar")).compact should equal(LiteralText("FooBar", format = TextFormat(Red)))
   }
 
 }

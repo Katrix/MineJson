@@ -80,26 +80,26 @@ sealed trait Text {
 
   /**
     * Tries to create a new [[Text]] where the children have been merged and
-    * optimized.
+    * compacted.
     */
-  def optimize: Text = {
+  def compact: Text = {
 
     @tailrec
     def inner(acc: Seq[Text], current: Text, next: Text, rest: Seq[Text]): Seq[Text] = {
 
       current.merge(next) match {
         case Some(merged) =>
-          if (rest.isEmpty) acc :+ merged else inner(acc, merged.optimize, rest.head.optimize, rest.tail)
+          if (rest.isEmpty) acc :+ merged else inner(acc, merged.compact, rest.head.compact, rest.tail)
         case None =>
-          if (rest.isEmpty) acc :+ current :+ next else inner(acc :+ current, next, rest.head.optimize, rest.tail)
+          if (rest.isEmpty) acc :+ current :+ next else inner(acc :+ current, next, rest.head.compact, rest.tail)
       }
     }
 
     //We merge with the parent without the children to ensure we don't get duplicated text
-    //It also helps uncover Texts that serve no other purpose that having children
+    //It also helps uncover Texts that serve no other purpose than having children
     children match {
       case Seq(head, next, rest @ _*) =>
-        val newChildren = inner(Nil, head.optimize, next.optimize, rest)
+        val newChildren = inner(Vector.empty, head.compact, next.compact, rest)
 
         //We try to merge the first child into the parent.
         //If it fails, we set the children to the new children.
@@ -107,10 +107,10 @@ sealed trait Text {
         copyBase(children = Nil)
           .merge(newChildren.head)
           .fold(copyBase(children = newChildren)) { merged =>
-            merged.copyBase(children = merged.children ++ newChildren.tail).optimize
+            merged.copyBase(children = merged.children ++ newChildren.tail).compact
           }
 
-      case Seq(single) => this.copyBase(children = Nil).merge(single.optimize).fold(this)(_.optimize)
+      case Seq(single) => this.copyBase(children = Nil).merge(single.compact).fold(this)(_.compact)
       case Seq()       => this
     }
   }
