@@ -68,10 +68,10 @@ case class ExplorationMap(
 object ExplorationMap {
   implicit val encoder: Encoder[ExplorationMap] = (a: ExplorationMap) =>
     Json.obj(
-      "destination" := a.destination,
-      "decoration" := a.decoration,
-      "zoom" := a.zoom,
-      "search_radius" := a.searchRadius,
+      "destination"          := a.destination,
+      "decoration"           := a.decoration,
+      "zoom"                 := a.zoom,
+      "search_radius"        := a.searchRadius,
       "skip_existing_chunks" := a.skipExistingChunks,
   )
 }
@@ -97,11 +97,11 @@ object SetAttributes {
       "function" := "set_attributes",
       "modifiers" := a.modifiers.map { modifier =>
         Json.obj(
-          "name" := modifier.name,
+          "name"      := modifier.name,
           "attribute" := modifier.attribute,
-          "amount" := modifier.amount,
-          "id" := modifier.id,
-          "slot" := modifier.slot
+          "amount"    := modifier.amount,
+          "id"        := modifier.id,
+          "slot"      := modifier.slot
         )
       }.asJson
   )
@@ -134,7 +134,7 @@ object AttributeSlotsListOrSingle {
 
   implicit val encoder: Encoder[AttributeSlotsListOrSingle] = {
     case AttributeSlotsListOrSingleAsSingle(slot) => slot.asJson
-    case AttributeSlotsListOrSingleAsList(slots)  => slots.asJson
+    case AttributeSlotsListOrSingleAsList(slots) => slots.asJson
   }
 }
 case class AttributeSlotsListOrSingleAsSingle(slot: AttributeSlot)     extends AttributeSlotsListOrSingle

@@ -49,8 +49,8 @@ case class EntityProperties(entity: Option[Entity] = None, properties: Option[En
 object EntityProperties {
   implicit val encoder: Encoder[EntityProperties] = (a: EntityProperties) =>
     Json.obj(
-      "condition" := "entity_properties",
-      "entity" := a.entity,
+      "condition"  := "entity_properties",
+      "entity"     := a.entity,
       "properties" := Json.obj("on_fire" := a.properties.flatMap(_.onFire))
   )
 }
@@ -86,8 +86,8 @@ case class RandomChanceWithLooting(chance: Double, lootingMultiplier: Double) ex
 object RandomChanceWithLooting {
   implicit val encoder: Encoder[RandomChanceWithLooting] = (a: RandomChanceWithLooting) =>
     Json.obj(
-      "condition" := "random_chance_with_looting",
-      "chance" := a.chance,
+      "condition"          := "random_chance_with_looting",
+      "chance"             := a.chance,
       "looting_multiplier" := a.lootingMultiplier
   )
 }

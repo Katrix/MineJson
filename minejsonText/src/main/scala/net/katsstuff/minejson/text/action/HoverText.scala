@@ -28,7 +28,7 @@ import net.katsstuff.typenbt.NBTCompound
 
 sealed trait HoverText
 object HoverText {
-  final case class ShowText(value: Text) extends HoverText
-  final case class ShowItem(value: NBTCompound) extends HoverText
+  final case class ShowText(value: Text)          extends HoverText
+  final case class ShowItem(value: NBTCompound)   extends HoverText
   final case class ShowEntity(value: NBTCompound) extends HoverText
 }

@@ -76,8 +76,7 @@ object Entity {
 
 case class Effect(name: ResourceId, amplifier: Option[RangeOrSingle] = None, duration: Option[RangeOrSingle] = None)
 object Effect {
-  implicit val encoder: Encoder[Effect] = (a: Effect) =>
-    Json.obj("amplifier" := a.amplifier, "duration" := a.duration)
+  implicit val encoder: Encoder[Effect] = (a: Effect) => Json.obj("amplifier" := a.amplifier, "duration" := a.duration)
 }
 
 case class Distance(
@@ -213,8 +212,7 @@ object Location {
 
 case class Position(x: Option[RangeOrSingle] = None, y: Option[RangeOrSingle] = None, z: Option[RangeOrSingle] = None)
 object Position {
-  implicit val encoder: Encoder[Position] = (a: Position) =>
-    Json.obj("x" := a.x, "y" := a.y, "z" := a.z)
+  implicit val encoder: Encoder[Position] = (a: Position) => Json.obj("x" := a.x, "y" := a.y, "z" := a.z)
 }
 
 case class Damage(
@@ -234,7 +232,7 @@ object Damage {
       "source_entity" := a.sourceEntity,
       "taken"         := a.taken,
       "type"          := a.tpe
-    )
+  )
 }
 
 case class DamageType(
@@ -259,5 +257,5 @@ object DamageType {
       "is_magic"                 := a.isMagic,
       "is_projectile"            := a.isProjectile,
       "source_entity"            := a.sourceEntity
-    )
+  )
 }

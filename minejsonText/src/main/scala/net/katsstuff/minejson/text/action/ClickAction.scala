@@ -25,7 +25,7 @@ package net.katsstuff.minejson.text.action
 
 sealed trait ClickAction
 case object ClickAction {
-  final case class OpenUrl(value: String) extends ClickAction
-  final case class RunCommand(value: String) extends ClickAction
+  final case class OpenUrl(value: String)        extends ClickAction
+  final case class RunCommand(value: String)     extends ClickAction
   final case class SuggestCommand(value: String) extends ClickAction
 }

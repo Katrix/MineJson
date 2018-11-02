@@ -26,7 +26,7 @@ package net.katsstuff.minejson.text.format
 case class CompositeTextStyle(styles: Map[TextStyle, Boolean]) {
 
   def +(style: (TextStyle, Boolean)): CompositeTextStyle = copy(styles + style)
-  def -(style: TextStyle):            CompositeTextStyle = copy(styles - style)
+  def -(style: TextStyle): CompositeTextStyle            = copy(styles - style)
   def combine(other: CompositeTextStyle): CompositeTextStyle = {
     def combineStyle(self: Option[Boolean], other: Option[Boolean]): Option[Boolean] =
       self match {
@@ -48,7 +48,7 @@ case class CompositeTextStyle(styles: Map[TextStyle, Boolean]) {
   }
 }
 object CompositeTextStyle {
-  final val None = CompositeTextStyle()
+  final val None                                    = CompositeTextStyle()
   def apply(styles: TextStyle*): CompositeTextStyle = CompositeTextStyle(styles.map(_ -> true).toMap)
   def fromOptions(styles: Seq[(TextStyle, Option[Boolean])]): CompositeTextStyle = {
     val filtered = styles.collect {

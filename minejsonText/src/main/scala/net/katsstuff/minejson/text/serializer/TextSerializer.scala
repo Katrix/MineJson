@@ -29,8 +29,8 @@ import net.katsstuff.minejson.text.Text
 
 trait TextSerializer {
 
-  def serialize(text: Text):            String
-  def deserialize(string: String):      Try[Text]
+  def serialize(text: Text): String
+  def deserialize(string: String): Try[Text]
   def deserializeThrow(string: String): Text
 
 }

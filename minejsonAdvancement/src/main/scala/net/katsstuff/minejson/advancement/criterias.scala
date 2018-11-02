@@ -32,13 +32,14 @@ trait Criteria {
   def toJson: Json
 }
 
-case class BredAnimals(child: Option[Entity] = None, parent: Option[Entity] = None, partner: Option[Entity] = None) extends Criteria {
+case class BredAnimals(child: Option[Entity] = None, parent: Option[Entity] = None, partner: Option[Entity] = None)
+    extends Criteria {
   override def toJson: Json = Encoder[BredAnimals].apply(this)
 }
 object BredAnimals {
   implicit val encoder: Encoder[BredAnimals] = (a: BredAnimals) =>
     Json.obj(
-      "trigger" := "minecraft:bred_animals",
+      "trigger"    := "minecraft:bred_animals",
       "conditions" := Json.obj("child" := a.child, "parent" := a.parent, "partner" := a.parent)
   )
 }
@@ -89,7 +90,7 @@ case class CuredZombieVillager(villager: Option[Entity] = None, zombie: Option[E
 object CuredZombieVillager {
   implicit val encoder: Encoder[CuredZombieVillager] = (a: CuredZombieVillager) =>
     Json.obj(
-      "trigger" := "minecraft:cured_zombie_villager",
+      "trigger"    := "minecraft:cured_zombie_villager",
       "conditions" := Json.obj("villager" := a.villager, "zombie" := a.zombie)
   )
 }
@@ -100,7 +101,7 @@ case class EffectsChanged(effects: Seq[Effect] = Nil) extends Criteria {
 object EffectsChanged {
   implicit val encoder: Encoder[EffectsChanged] = (a: EffectsChanged) =>
     Json.obj(
-      "trigger" := "minecraft:effects_changed",
+      "trigger"    := "minecraft:effects_changed",
       "conditions" := Json.obj("effects" := a.effects.map(e => e.name.toString := e).toMap)
   )
 }
@@ -135,7 +136,7 @@ case class EntityKilledPlayer(entity: Option[Entity] = None, killingBlow: Option
 object EntityKilledPlayer {
   implicit val encoder: Encoder[EntityKilledPlayer] = (a: EntityKilledPlayer) =>
     Json.obj(
-      "trigger" := "minecraft:entity_killed_player",
+      "trigger"    := "minecraft:entity_killed_player",
       "conditions" := Json.obj("entity" := a.entity, "killing_blow" := a.killingBlow)
   )
 }
@@ -148,13 +149,14 @@ object FilledBucket {
     Json.obj("trigger" := "minecraft:filled_bucket", "conditions" := Json.obj("item" := a.item))
 }
 
-case class FishingRodHooked(entity: Option[Entity] = None, item: Option[Item] = None, rod: Option[Item] = None) extends Criteria {
+case class FishingRodHooked(entity: Option[Entity] = None, item: Option[Item] = None, rod: Option[Item] = None)
+    extends Criteria {
   override def toJson: Json = Encoder[FishingRodHooked].apply(this)
 }
 object FishingRodHooked {
   implicit val encoder: Encoder[FishingRodHooked] = (a: FishingRodHooked) =>
     Json.obj(
-      "trigger" := "minecraft:fishing_rod_hooked",
+      "trigger"    := "minecraft:fishing_rod_hooked",
       "conditions" := Json.obj("entity" := a.entity, "item" := a.item, "rod" := a.rod)
   )
 }
@@ -169,7 +171,7 @@ case class InventoryChanged(items: Seq[Item] = Nil, slots: Option[Slots] = None)
 object InventoryChanged {
   implicit val encoder: Encoder[InventoryChanged] = (a: InventoryChanged) =>
     Json.obj(
-      "trigger" := "minecraft:inventory_changed",
+      "trigger"    := "minecraft:inventory_changed",
       "conditions" := Json.obj("items" := a.items, "slots" := a.slots)
   )
 }
@@ -205,7 +207,7 @@ case class Levitation(distance: Option[Distance] = None, duration: Option[RangeO
 object Levitation {
   implicit val encoder: Encoder[Levitation] = (a: Levitation) =>
     Json.obj(
-      "trigger" := "minecraft:levitation",
+      "trigger"    := "minecraft:levitation",
       "conditions" := Json.obj("distance" := a.distance, "duration" := a.duration)
   )
 }
@@ -237,7 +239,7 @@ case class PlacedBlock(
 object PlacedBlock {
   implicit val encoder: Encoder[PlacedBlock] = (a: PlacedBlock) =>
     Json.obj(
-      "trigger" := "minecraft:placed_block",
+      "trigger"    := "minecraft:placed_block",
       "conditions" := Json.obj("block" := a.block, "item" := a.item, "location" := a.location, "state" := a.state)
   )
 }
@@ -248,7 +250,7 @@ case class PlayerHurtEntity(damage: Option[Damage] = None, entity: Option[Entity
 object PlayerHurtEntity {
   implicit val encoder: Encoder[PlayerHurtEntity] = (a: PlayerHurtEntity) =>
     Json.obj(
-      "trigger" := "minecraft:player_hurt_entity",
+      "trigger"    := "minecraft:player_hurt_entity",
       "conditions" := Json.obj("damage" := a.damage, "entity" := a.entity)
   )
 }
@@ -259,7 +261,7 @@ case class PlayerKilledEntity(entity: Option[Entity] = None, killingBlow: Option
 object PlayerKilledEntity {
   implicit val encoder: Encoder[PlayerKilledEntity] = (a: PlayerKilledEntity) =>
     Json.obj(
-      "trigger" := "minecraft:player_killed_entity",
+      "trigger"    := "minecraft:player_killed_entity",
       "conditions" := Json.obj("entity" := a.entity, "killing_blow" := a.killingBlow)
   )
 }
@@ -322,7 +324,7 @@ case class VillagerTrade(item: Option[Item] = None, villager: Option[Entity] = N
 object VillagerTrade {
   implicit val encoder: Encoder[VillagerTrade] = (a: VillagerTrade) =>
     Json.obj(
-      "trigger" := "minecraft:villager_trade",
+      "trigger"    := "minecraft:villager_trade",
       "conditions" := Json.obj("item" := a.item, "villager" := a.villager)
   )
 }

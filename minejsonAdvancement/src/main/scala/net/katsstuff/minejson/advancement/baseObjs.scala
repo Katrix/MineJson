@@ -46,24 +46,24 @@ object Advancement {
   implicit val encoder: Encoder[Advancement] = (a: Advancement) => {
     Json.obj(
       "display" := Json.obj(
-        "icon" := Json.obj("item" := a.display.icon.item, "data" := a.display.icon.data),
-        "title" := a.display.title,
-        "frame" := a.display.frame,
-        "background" := a.display.background,
-        "description" := a.display.description,
-        "show_toast" := a.display.showToast,
+        "icon"             := Json.obj("item" := a.display.icon.item, "data" := a.display.icon.data),
+        "title"            := a.display.title,
+        "frame"            := a.display.frame,
+        "background"       := a.display.background,
+        "description"      := a.display.description,
+        "show_toast"       := a.display.showToast,
         "announce_to_chat" := a.display.announceToChat,
-        "hidden" := a.display.hidden
+        "hidden"           := a.display.hidden
       ),
-      "parent" := a.parent.map(_.id),
-      "criteria" := a.criteria.mapValues(_.toJson),
+      "parent"       := a.parent.map(_.id),
+      "criteria"     := a.criteria.mapValues(_.toJson),
       "requirements" := a.requirements,
       "rewards" := a.rewards.map { rewards =>
         Json.obj(
-          "recipes" := rewards.recipes.map(_.id),
-          "loot" := rewards.loot.map(_.id),
+          "recipes"    := rewards.recipes.map(_.id),
+          "loot"       := rewards.loot.map(_.id),
           "experience" := rewards.experience,
-          "function" := rewards.function
+          "function"   := rewards.function
         )
       }
     )
@@ -98,8 +98,8 @@ object FrameType {
   case object Challenge extends FrameType
 
   implicit val encoder: Encoder[FrameType] = {
-    case Task      => Json.fromString("task")
-    case Goal      => Json.fromString("goal")
+    case Task => Json.fromString("task")
+    case Goal => Json.fromString("goal")
     case Challenge => Json.fromString("challenge")
   }
 }

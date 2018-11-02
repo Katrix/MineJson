@@ -34,21 +34,20 @@ case class ResourceId(domain: String, path: String) {
   override def toString: String = s"$domain:$path"
 }
 object ResourceId {
-  def apply(string: String): ResourceId = {
+  def apply(string: String): ResourceId =
     if (string.contains(":")) {
       val strings = string.split(":", 2)
       ResourceId(strings(0), strings(1))
     } else ResourceId("minecraft", string)
-  }
 
-  implicit def mkId(string: String): ResourceId          = apply(string)
-  implicit val encoder:              Encoder[ResourceId] = (a: ResourceId) => a.toString.asJson
+  implicit def mkId(string: String): ResourceId = apply(string)
+  implicit val encoder: Encoder[ResourceId]     = (a: ResourceId) => a.toString.asJson
 }
 
 sealed trait RangeOrSingle
 object RangeOrSingle {
   implicit val encoder: Encoder[RangeOrSingle] = {
-    case Single(i)       => i.asJson
+    case Single(i) => i.asJson
     case Range(min, max) => Json.obj("min" := min, "max" := max)
   }
 
@@ -63,7 +62,7 @@ case class Range(min: Option[Int] = None, max: Option[Int] = None) extends Range
 sealed trait DoubleRangeOrSingle
 object DoubleRangeOrSingle {
   implicit val encoder: Encoder[DoubleRangeOrSingle] = {
-    case DoubleSingle(i)       => i.asJson
+    case DoubleSingle(i) => i.asJson
     case DoubleRange(min, max) => Json.obj("min" := min, "max" := max)
   }
 
@@ -78,7 +77,7 @@ case class DoubleRange(min: Option[Double] = None, max: Option[Double] = None) e
 sealed trait TextOrString
 object TextOrString {
   implicit def liftString(str: String): TextOrStringAsString = TextOrStringAsString(str)
-  implicit def liftText(text: Text):    TextOrStringAsText   = TextOrStringAsText(text)
+  implicit def liftText(text: Text): TextOrStringAsText      = TextOrStringAsText(text)
 
   implicit val encoder: Encoder[TextOrString] = {
     case TextOrStringAsString(str) => str.asJson

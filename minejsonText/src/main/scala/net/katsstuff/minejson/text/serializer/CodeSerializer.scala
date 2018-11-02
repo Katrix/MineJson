@@ -66,12 +66,12 @@ abstract class CodeSerializer extends TextSerializer {
       if (text.format.color != NoColor) builder.append(s"$codeChar${objectsToCodes(text.format.color)}")
       for ((style, applied) <- text.format.style.styles if applied) builder.append(s"$codeChar${objectsToCodes(style)}")
       val rawContent = text match {
-        case text: LiteralText                           => text.content
-        case text: TranslateText                         => text.key.format(text.args: _*)
+        case text: LiteralText => text.content
+        case text: TranslateText => text.key.format(text.args: _*)
         case ScoreText(_, _, Some(value), _, _, _, _, _) => value
-        case ScoreText(name, _, None, _, _, _, _, _)     => name
-        case text: SelectorText                          => text.selector
-        case text: KeybindText                           => text.key
+        case ScoreText(name, _, None, _, _, _, _, _) => name
+        case text: SelectorText => text.selector
+        case text: KeybindText => text.key
       }
       builder.append(rawContent)
 

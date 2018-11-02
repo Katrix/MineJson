@@ -34,17 +34,17 @@ sealed trait Text {
 
   def insertionText: Option[String]
 
-  def noInsertion:               Text = copyBase(insertionText = None)
+  def noInsertion: Text               = copyBase(insertionText = None)
   def setInsertion(str: String): Text = copyBase(insertionText = Some(str))
 
   def clickAction: Option[ClickAction]
 
-  def noClickAction:                Text = copyBase(clickAction = None)
+  def noClickAction: Text                = copyBase(clickAction = None)
   def onClick(action: ClickAction): Text = copyBase(clickAction = Some(action))
 
   def hoverText: Option[HoverText]
 
-  def noHoverText:                 Text = copyBase(hoverText = None)
+  def noHoverText: Text                 = copyBase(hoverText = None)
   def hoverText(hover: HoverText): Text = copyBase(hoverText = Some(hover))
 
   def copyBase(
@@ -60,8 +60,8 @@ sealed trait Text {
 
   def append(texts: Text*): Text = children = children ++ texts
 
-  def toPlain:     String = PlainTextSerializer.serialize(this)
-  def toJson:      String = JsonTextSerializer.serialize(this)
+  def toPlain: String     = PlainTextSerializer.serialize(this)
+  def toJson: String      = JsonTextSerializer.serialize(this)
   def toCharCoded: String = FormattingCodeSerializer.serialize(this)
 
   def trim: Text = {
@@ -111,14 +111,14 @@ sealed trait Text {
           }
 
       case Seq(single) => this.copyBase(children = Nil).merge(single.compact).fold(this)(_.compact)
-      case Seq()       => this
+      case Seq() => this
     }
   }
 }
 
 object Text {
 
-  final val Empty:   Text = LiteralText("")
+  final val Empty: Text   = LiteralText("")
   final val NewLine: Text = LiteralText("\n")
 
   def apply(string: String): LiteralText = LiteralText(string)
@@ -130,11 +130,11 @@ object Text {
       val builder       = new ArrayBuffer[Text]()
       var changedFormat = false
 
-      var format = TextFormat.None
-      var onClick:       Option[ClickAction]   = None
+      var format                               = TextFormat.None
+      var onClick: Option[ClickAction]         = None
       var insertionText: Option[InsertionText] = None
-      var hoverText:     Option[HoverText]     = None
-      val iterator = anys.iterator
+      var hoverText: Option[HoverText]         = None
+      val iterator                             = anys.iterator
 
       while (iterator.hasNext) {
         iterator.next() match {
@@ -226,7 +226,7 @@ object Text {
             changedFormat = false
             builder.lastOption.flatMap(last => last.merge(child)) match {
               case Some(combined) => builder(builder.size - 1) = combined
-              case None           => builder.append(child)
+              case None => builder.append(child)
             }
         }
       }

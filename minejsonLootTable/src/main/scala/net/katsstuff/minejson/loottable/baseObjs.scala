@@ -53,10 +53,10 @@ case class LootPool(
 object LootPool {
   implicit val encoder: Encoder[LootPool] = (a: LootPool) =>
     Json.obj(
-      "conditions" := a.conditions.map(_.toJson),
-      "rolls" := a.rolls,
+      "conditions"  := a.conditions.map(_.toJson),
+      "rolls"       := a.rolls,
       "bonus_rolls" := a.bonusRolls,
-      "entries" := a.entries
+      "entries"     := a.entries
   )
 }
 
@@ -83,10 +83,10 @@ object LootEntry {
   implicit val encoder: Encoder[LootEntry] = (a: LootEntry) =>
     Json.obj(
       "conditions" := a.conditions.map(_.toJson),
-      "type" := a.tpe,
-      "name" := a.name.id,
-      "functions" := a.functions.map(_.toJson),
-      "weight" := a.weight,
-      "quality" := a.quality
+      "type"       := a.tpe,
+      "name"       := a.name.id,
+      "functions"  := a.functions.map(_.toJson),
+      "weight"     := a.weight,
+      "quality"    := a.quality
   )
 }

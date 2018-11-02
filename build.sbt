@@ -2,7 +2,7 @@ import sbtcrossproject.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "net.katsstuff",
-  version := "0.2-SNAPSHOT",
+  version      := "0.2-SNAPSHOT",
   scalaVersion := "2.12.5",
   scalacOptions ++= Seq(
     "-deprecation",
@@ -17,7 +17,7 @@ lazy val sharedSettings = Seq(
 )
 
 lazy val publishSettings = Seq(
-  publishMavenStyle := true,
+  publishMavenStyle       := true,
   publishArtifact in Test := false,
   pomIncludeRepository := { _ =>
     false
@@ -30,8 +30,8 @@ lazy val publishSettings = Seq(
       Some("scm:git:github.com/Katrix/MineJson")
     )
   ),
-  homepage := Some(url("https://github.com/Katrix/MineJson")),
-  developers := List(Developer("Katrix", "Nikolai Frid", "katrix97@hotmail.com", url("http://katsstuff.net/"))),
+  homepage        := Some(url("https://github.com/Katrix/MineJson")),
+  developers      := List(Developer("Katrix", "Nikolai Frid", "katrix97@hotmail.com", url("http://katsstuff.net/"))),
   autoAPIMappings := true,
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
@@ -47,13 +47,13 @@ lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
   .settings(
     sharedSettings,
     publishSettings,
-    name := "minejson-text",
-    libraryDependencies += "net.katsstuff" %%% "typenbt"           % "0.4-SNAPSHOT",
+    name                                   := "minejson-text",
+    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.4-SNAPSHOT",
     libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.4-SNAPSHOT",
-    libraryDependencies += "io.circe"      %%% "circe-core"        % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-core"        % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-parser"      % "0.9.3",
-    libraryDependencies += "org.scalatest" %% "scalatest"          % "3.0.4" % Test
+    libraryDependencies += "io.circe"      %%% "circe-core" % "0.9.3",
+    libraryDependencies += "io.circe"      %%% "circe-core" % "0.9.3",
+    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.9.3",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
   )
 
 lazy val minejsonTextJVM = minejsonText.jvm

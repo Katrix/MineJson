@@ -31,12 +31,12 @@ import net.katsstuff.minejson.ResourceId
 import net.katsstuff.typenbt.{Mojangson, NBTCompound}
 
 trait Recipe extends RecipeOrResourceId {
-  def fileName:   ResourceId
-  def tpe:        RecipeType
-  def group:      Option[ResourceId]
-  def result:     RecipeResultItemOrResourceId
+  def fileName: ResourceId
+  def tpe: RecipeType
+  def group: Option[ResourceId]
+  def result: RecipeResultItemOrResourceId
   def conditions: Seq[RecipeCondition]
-  def toJson:     Json
+  def toJson: Json
 
   override def id: ResourceId = fileName
 }
@@ -62,22 +62,22 @@ case class RawRecipe(
     cookingTime: Option[Int] = None,
     conditions: Seq[RecipeCondition] = Nil
 ) extends Recipe {
-  override def id:     ResourceId = fileName
-  override def toJson: Json       = Encoder[RawRecipe].apply(this)
+  override def id: ResourceId = fileName
+  override def toJson: Json   = Encoder[RawRecipe].apply(this)
 }
 object RawRecipe {
   implicit val encoder: Encoder[RawRecipe] = (a: RawRecipe) =>
     Json.obj(
-      "type" := a.tpe,
-      "group" := a.group,
-      "pattern" := a.pattern,
-      "key" := a.key.map(t => t._1.toString -> t._2.toJson),
-      "ingredient" := a.ingredient.map(_.toJson),
+      "type"        := a.tpe,
+      "group"       := a.group,
+      "pattern"     := a.pattern,
+      "key"         := a.key.map(t => t._1.toString -> t._2.toJson),
+      "ingredient"  := a.ingredient.map(_.toJson),
       "ingredients" := a.ingredients.map(_.toJson),
-      "result" := a.result,
-      "experience" := a.experience,
+      "result"      := a.result,
+      "experience"  := a.experience,
       "cookingtime" := a.cookingTime,
-      "conditions" := a.conditions.map(_.toJson)
+      "conditions"  := a.conditions.map(_.toJson)
   )
 }
 
@@ -89,17 +89,17 @@ case class ShapedRecipe(
     result: RecipeResultItemOrResourceId,
     conditions: Seq[RecipeCondition] = Nil
 ) extends Recipe {
-  override def tpe:    RecipeType = RecipeType.CraftingShaped
-  override def toJson: Json       = Encoder[ShapedRecipe].apply(this)
+  override def tpe: RecipeType = RecipeType.CraftingShaped
+  override def toJson: Json    = Encoder[ShapedRecipe].apply(this)
 }
 object ShapedRecipe {
   implicit val encoder: Encoder[ShapedRecipe] = (a: ShapedRecipe) =>
     Json.obj(
-      "type" := a.tpe,
-      "group" := a.group,
-      "pattern" := a.pattern,
-      "key" := a.key.map(t => t._1.toString -> t._2.toJson),
-      "result" := a.result,
+      "type"       := a.tpe,
+      "group"      := a.group,
+      "pattern"    := a.pattern,
+      "key"        := a.key.map(t => t._1.toString -> t._2.toJson),
+      "result"     := a.result,
       "conditions" := a.conditions.map(_.toJson)
   )
 }
@@ -111,17 +111,17 @@ case class ShapelessRecipe(
     result: RecipeResultItemOrResourceId,
     conditions: Seq[RecipeCondition] = Nil
 ) extends Recipe {
-  override def tpe:    RecipeType = RecipeType.CraftingShapeless
-  override def toJson: Json       = Encoder[ShapelessRecipe].apply(this)
+  override def tpe: RecipeType = RecipeType.CraftingShapeless
+  override def toJson: Json    = Encoder[ShapelessRecipe].apply(this)
 }
 object ShapelessRecipe {
   implicit val encoder: Encoder[ShapelessRecipe] = (a: ShapelessRecipe) =>
     Json.obj(
-      "type" := a.tpe,
-      "group" := a.group,
+      "type"        := a.tpe,
+      "group"       := a.group,
       "ingredients" := a.ingredients.map(_.toJson),
-      "result" := a.result,
-      "conditions" := a.conditions.map(_.toJson)
+      "result"      := a.result,
+      "conditions"  := a.conditions.map(_.toJson)
   )
 }
 
@@ -134,19 +134,19 @@ case class SmeltingRecipe(
     cookingTime: Option[Int] = None,
     conditions: Seq[RecipeCondition] = Nil
 ) extends Recipe {
-  override def tpe:    RecipeType = RecipeType.Smelting
-  override def toJson: Json       = Encoder[SmeltingRecipe].apply(this)
+  override def tpe: RecipeType = RecipeType.Smelting
+  override def toJson: Json    = Encoder[SmeltingRecipe].apply(this)
 }
 object SmeltingRecipe {
   implicit val encoder: Encoder[SmeltingRecipe] = (a: SmeltingRecipe) =>
     Json.obj(
-      "type" := a.tpe,
-      "group" := a.group,
-      "ingredient" := a.ingredient.map(_.toJson),
-      "result" := a.result,
-      "experience" := a.experience,
+      "type"        := a.tpe,
+      "group"       := a.group,
+      "ingredient"  := a.ingredient.map(_.toJson),
+      "result"      := a.result,
+      "experience"  := a.experience,
       "cookingtime" := a.cookingTime,
-      "conditions" := a.conditions.map(_.toJson)
+      "conditions"  := a.conditions.map(_.toJson)
   )
 }
 
@@ -159,18 +159,18 @@ case class OreShapedRecipe(
     mirror: Boolean = true,
     conditions: Seq[RecipeCondition] = Nil
 ) extends Recipe {
-  override def tpe:    RecipeType = RecipeType.OreShaped
-  override def toJson: Json       = Encoder[OreShapedRecipe].apply(this)
+  override def tpe: RecipeType = RecipeType.OreShaped
+  override def toJson: Json    = Encoder[OreShapedRecipe].apply(this)
 }
 object OreShapedRecipe {
   implicit val encoder: Encoder[OreShapedRecipe] = (a: OreShapedRecipe) =>
     Json.obj(
-      "type" := a.tpe,
-      "group" := a.group,
-      "pattern" := a.pattern,
-      "key" := a.key.map(t => t._1.toString -> t._2.toJson),
-      "result" := a.result,
-      "mirror" := a.mirror,
+      "type"       := a.tpe,
+      "group"      := a.group,
+      "pattern"    := a.pattern,
+      "key"        := a.key.map(t => t._1.toString -> t._2.toJson),
+      "result"     := a.result,
+      "mirror"     := a.mirror,
       "conditions" := a.conditions.map(_.toJson)
   )
 }
@@ -182,17 +182,17 @@ case class OreShapelessRecipe(
     result: RecipeResultItemOrResourceId,
     conditions: Seq[RecipeCondition] = Nil
 ) extends Recipe {
-  override def tpe:    RecipeType = RecipeType.OreShapeless
-  override def toJson: Json       = Encoder[OreShapelessRecipe].apply(this)
+  override def tpe: RecipeType = RecipeType.OreShapeless
+  override def toJson: Json    = Encoder[OreShapelessRecipe].apply(this)
 }
 object OreShapelessRecipe {
   implicit val encoder: Encoder[OreShapelessRecipe] = (a: OreShapelessRecipe) =>
     Json.obj(
-      "type" := a.tpe,
-      "group" := a.group,
+      "type"        := a.tpe,
+      "group"       := a.group,
       "ingredients" := a.ingredients.map(_.toJson),
-      "result" := a.result,
-      "conditions" := a.conditions.map(_.toJson)
+      "result"      := a.result,
+      "conditions"  := a.conditions.map(_.toJson)
   )
 }
 
@@ -261,8 +261,8 @@ object ItemNbtRecipeIngredient {
       "type" := "minecraft:item_nbt",
       "item" := a.item,
       "data" := a.data,
-      "nbt" := a.nbt.map(Mojangson.serialize),
-      "tag" := a.tag
+      "nbt"  := a.nbt.map(Mojangson.serialize),
+      "tag"  := a.tag
   )
 }
 case class OreRecipeIngredient(ore: String) extends RecipeIngredient {
@@ -282,7 +282,7 @@ object RecipeResultItemOrResourceId {
     RecipeResultItemOrResourceIdAsRecipeResult(result)
 
   implicit val encoder: Encoder[RecipeResultItemOrResourceId] = {
-    case RecipeResultItemOrResourceIdAsResouceId(id)        => id.asJson
+    case RecipeResultItemOrResourceIdAsResouceId(id) => id.asJson
     case RecipeResultItemOrResourceIdAsRecipeResult(result) => result.asJson
   }
 }
