@@ -61,16 +61,40 @@ lazy val minejsonTextJS  = minejsonText.js
 
 lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
-  .settings(sharedSettings, publishSettings, name := "minejson")
+  .settings(sharedSettings, publishSettings, name := "minejson-base")
   .dependsOn(minejsonText)
 
 lazy val minejsonBaseJVM = minejsonBase.jvm
 lazy val minejsonBaseJS  = minejsonBase.js
 
+lazy val minejsonAdvancement = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(sharedSettings, publishSettings, name := "minejson-advancement")
+  .dependsOn(minejsonBase)
+
+lazy val minejsonAdvancementJVM = minejsonAdvancement.jvm
+lazy val minejsonAdvancementJS  = minejsonAdvancement.js
+
+lazy val minejsonLootTable = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(sharedSettings, publishSettings, name := "minejson-loottable")
+  .dependsOn(minejsonBase)
+
+lazy val minejsonLootTableJVM = minejsonLootTable.jvm
+lazy val minejsonLootTableJS  = minejsonLootTable.js
+
+lazy val minejsonRecipe = crossProject(JSPlatform, JVMPlatform)
+  .crossType(CrossType.Pure)
+  .settings(sharedSettings, publishSettings, name := "minejson-recipe")
+  .dependsOn(minejsonBase)
+
+lazy val minejsonRecipeJVM = minejsonRecipe.jvm
+lazy val minejsonRecipeJS  = minejsonRecipe.js
+
 lazy val minejsonGenerator = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(sharedSettings, publishSettings, name := "minejson-generator")
-  .dependsOn(minejsonBase)
+  .dependsOn(minejsonAdvancement, minejsonLootTable, minejsonRecipe)
 
 lazy val minejsonGeneratorJVM = minejsonGenerator.jvm
 lazy val minejsonGeneratorJS  = minejsonGenerator.js
@@ -83,6 +107,12 @@ lazy val minejsonRoot =
       minejsonTextJS,
       minejsonBaseJVM,
       minejsonBaseJS,
+      minejsonAdvancementJVM,
+      minejsonAdvancementJS,
+      minejsonLootTableJVM,
+      minejsonLootTableJS,
+      minejsonRecipeJVM,
+      minejsonRecipeJS,
       minejsonGeneratorJVM,
       minejsonGeneratorJS
     )
