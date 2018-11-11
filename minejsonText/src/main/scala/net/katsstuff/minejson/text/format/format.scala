@@ -27,29 +27,25 @@ case class CompositeTextStyle(styles: Map[TextStyle, Boolean]) {
 
   def +(style: (TextStyle, Boolean)): CompositeTextStyle = copy(styles + style)
   def -(style: TextStyle): CompositeTextStyle            = copy(styles - style)
+
   def combine(other: CompositeTextStyle): CompositeTextStyle = {
-    def combineStyle(self: Option[Boolean], other: Option[Boolean]): Option[Boolean] =
-      self match {
-        case Some(selfState) =>
-          other match {
-            case Some(otherState) =>
-              if (selfState != otherState) None
-              else self
-            case None => self
-          }
-        case None => other
-      }
+    def combineStyle(self: Option[Boolean], other: Option[Boolean]): Option[Boolean] = (self, other) match {
+      case (Some(selfState), Some(otherState)) if selfState != otherState => None
+      case (Some(_), _)                                                   => self
+      case _                                                              => other
+    }
 
-    val combined = TextStyle.AllStyles.map(style => style -> combineStyle(styles.get(style), other.styles.get(style)))
+    val combined =
+      TextStyle.AllStyles.map(style => (style: TextStyle) -> combineStyle(styles.get(style), other.styles.get(style)))
 
-    CompositeTextStyle(combined.collect {
-      case (k, Some(v)) => (k: TextStyle) -> v
-    }.toMap)
+    CompositeTextStyle.fromOptions(combined)
   }
 }
 object CompositeTextStyle {
-  final val None                                    = CompositeTextStyle()
+  final val None = CompositeTextStyle()
+
   def apply(styles: TextStyle*): CompositeTextStyle = CompositeTextStyle(styles.map(_ -> true).toMap)
+
   def fromOptions(styles: Seq[(TextStyle, Option[Boolean])]): CompositeTextStyle = {
     val filtered = styles.collect {
       case (k, Some(v)) => k -> v
@@ -62,11 +58,10 @@ case class TextFormat(color: TextColor = TextColor.NoColor, style: CompositeText
 
   def combine(other: TextFormat): TextFormat = {
     val otherColor = other.color
-    val colorToUse = if (otherColor == TextColor.NoColor) {
-      this.color
-    } else if (otherColor == TextColor.Reset) {
-      TextColor.NoColor
-    } else otherColor
+    val colorToUse =
+      if (otherColor == TextColor.NoColor) this.color
+      else if (otherColor == TextColor.Reset) TextColor.NoColor
+      else otherColor
 
     TextFormat(colorToUse, this.style combine other.style)
   }

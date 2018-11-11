@@ -68,7 +68,7 @@ lazy val minejsonBaseJS  = minejsonBase.js
 lazy val minejsonAdvancement = crossProject(JSPlatform, JVMPlatform)
   .crossType(CrossType.Pure)
   .settings(sharedSettings, publishSettings, name := "minejson-advancement")
-  .dependsOn(minejsonBase)
+  .dependsOn(minejsonLootTable, minejsonRecipe)
 
 lazy val minejsonAdvancementJVM = minejsonAdvancement.jvm
 lazy val minejsonAdvancementJS  = minejsonAdvancement.js

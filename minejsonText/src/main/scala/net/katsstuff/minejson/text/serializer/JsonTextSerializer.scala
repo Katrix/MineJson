@@ -38,32 +38,46 @@ object JsonTextSerializer extends TextSerializer {
     val common = commonJsonWrite(text)
 
     val extra = text match {
-      case text: LiteralText   => Seq("text"      := text.content)
-      case text: TranslateText => Seq("translate" := text.key, "with" := text.args.map(_.toString))
+      case text: LiteralText => Seq("text" := text.content)
+      case text: TranslateText =>
+        Seq(
+          "translate" := text.key,
+          "with"      := text.args.map(_.toString)
+        )
       case text: ScoreText =>
-        Seq("score" := Json.obj("name" := text.name, "objective" := text.objective, "value" := text.value))
+        Seq(
+          "score" := Json.obj(
+            "name"      := text.name,
+            "objective" := text.objective,
+            "value"     := text.value
+          )
+        )
       case text: SelectorText => Seq("selector" := text.selector)
       case text: KeybindText  => Seq("keybind"  := text.key)
     }
 
     Json.obj(extra ++ common: _*)
-
   }
 
   implicit val textDecoder: Decoder[Text] = (c: HCursor) =>
     c.get[String]("text")
       .flatMap(text => commonJsonRead(Text(text), c))
-      .orElse(for {
-        translate <- c.get[String]("translate")
-        args      <- c.get[Option[Seq[String]]]("with").map(_.getOrElse(Nil))
-        res       <- commonJsonRead(TranslateText(translate, args), c)
-      } yield res)
-      .orElse(for {
-        name      <- c.downField("score").get[String]("name")
-        objective <- c.downField("score").get[String]("objective")
-        value     <- c.downField("score").get[Option[String]]("value")
-        res       <- commonJsonRead(ScoreText(name, objective, value), c)
-      } yield res)
+      .orElse {
+        for {
+          translate <- c.get[String]("translate")
+          args      <- c.getOrElse[Seq[String]]("with")(Nil)
+          res       <- commonJsonRead(TranslateText(translate, args), c)
+        } yield res
+      }
+      .orElse {
+        val score = c.downField("score")
+        for {
+          name      <- score.get[String]("name")
+          objective <- score.get[String]("objective")
+          value     <- score.get[Option[String]]("value")
+          res       <- commonJsonRead(ScoreText(name, objective, value), c)
+        } yield res
+      }
       .orElse(c.get[String]("selector").flatMap(selector => commonJsonRead(SelectorText(selector), c)))
       .orElse(c.get[String]("keybind").flatMap(key => commonJsonRead(KeybindText(key), c)))
 
@@ -119,10 +133,21 @@ object JsonTextSerializer extends TextSerializer {
   }
 
   implicit val clickActionEncoder: Encoder[ClickAction] = {
-    case ClickAction.OpenUrl(url)        => Json.obj("action" := "open_url", "value"    := url)
-    case ClickAction.RunCommand(command) => Json.obj("action" := "run_command", "value" := command)
+    case ClickAction.OpenUrl(url) =>
+      Json.obj(
+        "action" := "open_url",
+        "value"  := url
+      )
+    case ClickAction.RunCommand(command) =>
+      Json.obj(
+        "action" := "run_command",
+        "value"  := command
+      )
     case ClickAction.SuggestCommand(command) =>
-      Json.obj("action" := "suggest_command", "value" := command)
+      Json.obj(
+        "action" := "suggest_command",
+        "value"  := command
+      )
   }
 
   implicit val clickActionDecoder: Decoder[ClickAction] = (c: HCursor) => {
@@ -137,18 +162,27 @@ object JsonTextSerializer extends TextSerializer {
   }
 
   implicit val hoverActionEncoder: Encoder[HoverText] = {
-    case HoverText.ShowText(text) => Json.obj("action" := "show_text", "value" := text)
+    case HoverText.ShowText(text) =>
+      Json.obj(
+        "action" := "show_text",
+        "value"  := text
+      )
     case HoverText.ShowItem(nbt) =>
-      Json.obj("action" := "show_item", "value" := Mojangson.serialize(nbt))
+      Json.obj(
+        "action" := "show_item",
+        "value"  := Mojangson.serialize(nbt)
+      )
     case HoverText.ShowEntity(nbt) =>
-      Json.obj("action" := "show_entity", "value" := Mojangson.serialize(nbt))
+      Json.obj(
+        "action" := "show_entity",
+        "value"  := Mojangson.serialize(nbt)
+      )
   }
 
   implicit val hoverActionDecoder: Decoder[HoverText] = (c: HCursor) => {
     def nbtValue =
       c.get[String]("value")
         .flatMap { s =>
-          //TODO: Simple deserialize method returning unit
           Either
             .catchNonFatal(Mojangson.deserialize(s).get)
             .leftMap(e => DecodingFailure(e.getMessage, c.downField("value").history))
@@ -201,7 +235,7 @@ object JsonTextSerializer extends TextSerializer {
 
   def commonJsonRead(text: Text, c: HCursor): Either[DecodingFailure, Text] =
     for {
-      color         <- c.get[Option[TextColor]]("color").map(_.getOrElse(TextColor.NoColor))
+      color         <- c.getOrElse[TextColor]("color")(TextColor.NoColor)
       bold          <- c.get[Option[Boolean]]("bold").map(TextStyle.Bold -> _)
       underlined    <- c.get[Option[Boolean]]("underlinded").map(TextStyle.Underlined -> _)
       italic        <- c.get[Option[Boolean]]("italic").map(TextStyle.Italic -> _)
@@ -210,7 +244,7 @@ object JsonTextSerializer extends TextSerializer {
       insertion     <- c.get[Option[String]]("insertion")
       clickEvent    <- c.get[Option[ClickAction]]("clickEvent")
       hoverEvent    <- c.get[Option[HoverText]]("hoverAction")
-      children      <- c.get[Option[Seq[Text]]]("extra").map(_.getOrElse(Nil))
+      children      <- c.getOrElse[Seq[Text]]("extra")(Nil)
 
     } yield {
       val compositeTextStyle = CompositeTextStyle.fromOptions(Seq(bold, underlined, italic, strikeThrough, obfuscated))
