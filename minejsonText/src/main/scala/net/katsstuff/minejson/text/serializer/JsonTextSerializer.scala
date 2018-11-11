@@ -38,12 +38,12 @@ object JsonTextSerializer extends TextSerializer {
     val common = commonJsonWrite(text)
 
     val extra = text match {
-      case text: LiteralText => Seq("text"        := text.content)
+      case text: LiteralText   => Seq("text"      := text.content)
       case text: TranslateText => Seq("translate" := text.key, "with" := text.args.map(_.toString))
       case text: ScoreText =>
-        Seq("score"                             := Json.obj("name" := text.name, "objective" := text.objective, "value" := text.value))
+        Seq("score" := Json.obj("name" := text.name, "objective" := text.objective, "value" := text.value))
       case text: SelectorText => Seq("selector" := text.selector)
-      case text: KeybindText => Seq("keybind"   := text.key)
+      case text: KeybindText  => Seq("keybind"  := text.key)
     }
 
     Json.obj(extra ++ common: _*)
@@ -68,48 +68,48 @@ object JsonTextSerializer extends TextSerializer {
       .orElse(c.get[String]("keybind").flatMap(key => commonJsonRead(KeybindText(key), c)))
 
   implicit val colorEncoder: Encoder[TextColor] = {
-    case TextColor.NoColor => Json.Null
-    case TextColor.Black => "black".asJson
-    case TextColor.DarkBlue => "dark_blue".asJson
-    case TextColor.DarkGreen => "dark_green".asJson
-    case TextColor.DarkAqua => "dark_aqua".asJson
-    case TextColor.DarkRed => "dark_red".asJson
-    case TextColor.DarkPurple => "dark_purple".asJson
-    case TextColor.Gold => "gold".asJson
-    case TextColor.Gray => "gray".asJson
-    case TextColor.DarkGray => "dark_gray".asJson
-    case TextColor.Blue => "blue".asJson
-    case TextColor.Green => "green".asJson
-    case TextColor.Aqua => "aqua".asJson
-    case TextColor.Red => "red".asJson
+    case TextColor.NoColor     => Json.Null
+    case TextColor.Black       => "black".asJson
+    case TextColor.DarkBlue    => "dark_blue".asJson
+    case TextColor.DarkGreen   => "dark_green".asJson
+    case TextColor.DarkAqua    => "dark_aqua".asJson
+    case TextColor.DarkRed     => "dark_red".asJson
+    case TextColor.DarkPurple  => "dark_purple".asJson
+    case TextColor.Gold        => "gold".asJson
+    case TextColor.Gray        => "gray".asJson
+    case TextColor.DarkGray    => "dark_gray".asJson
+    case TextColor.Blue        => "blue".asJson
+    case TextColor.Green       => "green".asJson
+    case TextColor.Aqua        => "aqua".asJson
+    case TextColor.Red         => "red".asJson
     case TextColor.LightPurple => "light_purple".asJson
-    case TextColor.Yellow => "yellow".asJson
-    case TextColor.White => "white".asJson
-    case TextColor.Reset => "reset".asJson
+    case TextColor.Yellow      => "yellow".asJson
+    case TextColor.White       => "white".asJson
+    case TextColor.Reset       => "reset".asJson
   }
 
   implicit val colorDecoder: Decoder[TextColor] = (c: HCursor) => {
     if (c.value.isNull) Right(TextColor.NoColor)
     else {
       c.as[String].flatMap {
-        case "black" => Right(TextColor.Black)
-        case "dark_blue" => Right(TextColor.DarkBlue)
-        case "dark_green" => Right(TextColor.DarkGreen)
-        case "dark_aqua" => Right(TextColor.DarkAqua)
-        case "dark_red" => Right(TextColor.DarkRed)
-        case "dark_purple" => Right(TextColor.DarkPurple)
-        case "gold" => Right(TextColor.Gold)
-        case "gray" => Right(TextColor.Gray)
-        case "dark_gray" => Right(TextColor.DarkGray)
-        case "blue" => Right(TextColor.Blue)
-        case "green" => Right(TextColor.Green)
-        case "aqua" => Right(TextColor.Aqua)
-        case "red" => Right(TextColor.Red)
+        case "black"        => Right(TextColor.Black)
+        case "dark_blue"    => Right(TextColor.DarkBlue)
+        case "dark_green"   => Right(TextColor.DarkGreen)
+        case "dark_aqua"    => Right(TextColor.DarkAqua)
+        case "dark_red"     => Right(TextColor.DarkRed)
+        case "dark_purple"  => Right(TextColor.DarkPurple)
+        case "gold"         => Right(TextColor.Gold)
+        case "gray"         => Right(TextColor.Gray)
+        case "dark_gray"    => Right(TextColor.DarkGray)
+        case "blue"         => Right(TextColor.Blue)
+        case "green"        => Right(TextColor.Green)
+        case "aqua"         => Right(TextColor.Aqua)
+        case "red"          => Right(TextColor.Red)
         case "light_purple" => Right(TextColor.LightPurple)
-        case "yellow" => Right(TextColor.Yellow)
-        case "white" => Right(TextColor.White)
-        case "reset" => Right(TextColor.Reset)
-        case other => Left(DecodingFailure(s"$other is not a valid color", c.history))
+        case "yellow"       => Right(TextColor.Yellow)
+        case "white"        => Right(TextColor.White)
+        case "reset"        => Right(TextColor.Reset)
+        case other          => Left(DecodingFailure(s"$other is not a valid color", c.history))
       }
     }
   }
@@ -119,7 +119,7 @@ object JsonTextSerializer extends TextSerializer {
   }
 
   implicit val clickActionEncoder: Encoder[ClickAction] = {
-    case ClickAction.OpenUrl(url) => Json.obj("action"        := "open_url", "value"    := url)
+    case ClickAction.OpenUrl(url)        => Json.obj("action" := "open_url", "value"    := url)
     case ClickAction.RunCommand(command) => Json.obj("action" := "run_command", "value" := command)
     case ClickAction.SuggestCommand(command) =>
       Json.obj("action" := "suggest_command", "value" := command)
@@ -128,10 +128,10 @@ object JsonTextSerializer extends TextSerializer {
   implicit val clickActionDecoder: Decoder[ClickAction] = (c: HCursor) => {
     c.get[String]("value").flatMap { value =>
       c.get[String]("action").flatMap {
-        case "open_url" => Right(ClickAction.OpenUrl(value))
-        case "run_command" => Right(ClickAction.RunCommand(value))
+        case "open_url"        => Right(ClickAction.OpenUrl(value))
+        case "run_command"     => Right(ClickAction.RunCommand(value))
         case "suggest_command" => Right(ClickAction.SuggestCommand(value))
-        case other => Left(DecodingFailure(s"$other is not a valid click action", c.downField("action").history))
+        case other             => Left(DecodingFailure(s"$other is not a valid click action", c.downField("action").history))
       }
     }
   }
@@ -166,10 +166,10 @@ object JsonTextSerializer extends TextSerializer {
         }
 
     c.get[String]("action").flatMap {
-      case "show_text" => c.get[Text]("value").map(HoverText.ShowText)
-      case "show_item" => nbtValue.map(HoverText.ShowItem)
+      case "show_text"   => c.get[Text]("value").map(HoverText.ShowText)
+      case "show_item"   => nbtValue.map(HoverText.ShowItem)
       case "show_entity" => nbtValue.map(HoverText.ShowItem)
-      case other => Left(DecodingFailure(s"$other is not a valid hover action", c.downField("action").history))
+      case other         => Left(DecodingFailure(s"$other is not a valid hover action", c.downField("action").history))
     }
   }
 

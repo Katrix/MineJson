@@ -32,12 +32,12 @@ object PlainTextSerializer extends TextSerializer {
   override def serialize(text: Text): String = {
     val childrenContent = text.children.map(serialize).mkString
     val content = text match {
-      case text: LiteralText => text.content
-      case text: TranslateText => text.key.format(text.args: _*)
+      case text: LiteralText                           => text.content
+      case text: TranslateText                         => text.key.format(text.args: _*)
       case ScoreText(_, _, Some(value), _, _, _, _, _) => value
-      case ScoreText(name, _, None, _, _, _, _, _) => name
-      case text: SelectorText => text.selector
-      case text: KeybindText => text.key
+      case ScoreText(name, _, None, _, _, _, _, _)     => name
+      case text: SelectorText                          => text.selector
+      case text: KeybindText                           => text.key
     }
     s"$content$childrenContent"
   }

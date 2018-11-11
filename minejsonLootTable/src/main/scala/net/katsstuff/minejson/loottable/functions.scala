@@ -134,7 +134,7 @@ object AttributeSlotsListOrSingle {
 
   implicit val encoder: Encoder[AttributeSlotsListOrSingle] = {
     case AttributeSlotsListOrSingleAsSingle(slot) => slot.asJson
-    case AttributeSlotsListOrSingleAsList(slots) => slots.asJson
+    case AttributeSlotsListOrSingleAsList(slots)  => slots.asJson
   }
 }
 case class AttributeSlotsListOrSingleAsSingle(slot: AttributeSlot)     extends AttributeSlotsListOrSingle

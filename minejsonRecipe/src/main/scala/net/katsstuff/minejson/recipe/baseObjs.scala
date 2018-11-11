@@ -282,7 +282,7 @@ object RecipeResultItemOrResourceId {
     RecipeResultItemOrResourceIdAsRecipeResult(result)
 
   implicit val encoder: Encoder[RecipeResultItemOrResourceId] = {
-    case RecipeResultItemOrResourceIdAsResouceId(id) => id.asJson
+    case RecipeResultItemOrResourceIdAsResouceId(id)        => id.asJson
     case RecipeResultItemOrResourceIdAsRecipeResult(result) => result.asJson
   }
 }

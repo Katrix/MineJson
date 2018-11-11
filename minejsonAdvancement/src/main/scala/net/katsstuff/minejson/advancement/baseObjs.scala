@@ -98,8 +98,8 @@ object FrameType {
   case object Challenge extends FrameType
 
   implicit val encoder: Encoder[FrameType] = {
-    case Task => Json.fromString("task")
-    case Goal => Json.fromString("goal")
+    case Task      => Json.fromString("task")
+    case Goal      => Json.fromString("goal")
     case Challenge => Json.fromString("challenge")
   }
 }

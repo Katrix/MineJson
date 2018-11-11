@@ -47,7 +47,7 @@ object ResourceId {
 sealed trait RangeOrSingle
 object RangeOrSingle {
   implicit val encoder: Encoder[RangeOrSingle] = {
-    case Single(i) => i.asJson
+    case Single(i)       => i.asJson
     case Range(min, max) => Json.obj("min" := min, "max" := max)
   }
 
@@ -62,7 +62,7 @@ case class Range(min: Option[Int] = None, max: Option[Int] = None) extends Range
 sealed trait DoubleRangeOrSingle
 object DoubleRangeOrSingle {
   implicit val encoder: Encoder[DoubleRangeOrSingle] = {
-    case DoubleSingle(i) => i.asJson
+    case DoubleSingle(i)       => i.asJson
     case DoubleRange(min, max) => Json.obj("min" := min, "max" := max)
   }
 

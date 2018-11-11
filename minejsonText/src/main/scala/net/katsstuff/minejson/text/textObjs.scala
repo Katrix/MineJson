@@ -111,7 +111,7 @@ sealed trait Text {
           }
 
       case Seq(single) => this.copyBase(children = Nil).merge(single.compact).fold(this)(_.compact)
-      case Seq() => this
+      case Seq()       => this
     }
   }
 }
@@ -226,7 +226,7 @@ object Text {
             changedFormat = false
             builder.lastOption.flatMap(last => last.merge(child)) match {
               case Some(combined) => builder(builder.size - 1) = combined
-              case None => builder.append(child)
+              case None           => builder.append(child)
             }
         }
       }
