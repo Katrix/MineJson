@@ -1,9 +1,9 @@
-import sbtcrossproject.{crossProject, CrossType}
+import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "net.katsstuff",
   version      := "0.2-SNAPSHOT",
-  scalaVersion := "2.12.5",
+  scalaVersion := "2.12.7",
   scalacOptions ++= Seq(
     "-deprecation",
     "-feature",
@@ -12,8 +12,7 @@ lazy val sharedSettings = Seq(
     "-Yno-adapted-args",
     "-Ywarn-dead-code",
     "-Ywarn-unused-import"
-  ),
-  resolvers += Resolver.sonatypeRepo("snapshots"),
+  )
 )
 
 lazy val publishSettings = Seq(
@@ -48,11 +47,10 @@ lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
     sharedSettings,
     publishSettings,
     name                                   := "minejson-text",
-    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.4-SNAPSHOT",
-    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.4-SNAPSHOT",
-    libraryDependencies += "io.circe"      %%% "circe-core" % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-core" % "0.9.3",
-    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.9.3",
+    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.4.0",
+    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.4.0",
+    libraryDependencies += "io.circe"      %%% "circe-core" % "0.10.1",
+    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.10.1",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
   )
 
