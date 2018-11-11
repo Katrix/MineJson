@@ -2,7 +2,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 
 lazy val sharedSettings = Seq(
   organization := "net.katsstuff",
-  version      := "0.2-SNAPSHOT",
+  version      := "0.2",
   scalaVersion := "2.12.7",
   scalacOptions ++= Seq(
     "-deprecation",
