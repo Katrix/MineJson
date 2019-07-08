@@ -3,7 +3,7 @@ import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
 lazy val sharedSettings = Seq(
   organization := "net.katsstuff",
   version      := "0.2",
-  scalaVersion := "2.12.7",
+  scalaVersion := "2.12.8",
   scalacOptions ++= Seq(
     "-deprecation",
     "-feature",
@@ -47,10 +47,10 @@ lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
     sharedSettings,
     publishSettings,
     name                                   := "minejson-text",
-    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.4.0",
-    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.4.0",
-    libraryDependencies += "io.circe"      %%% "circe-core" % "0.10.1",
-    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.10.1",
+    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.5.0",
+    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.0",
+    libraryDependencies += "io.circe"      %%% "circe-core" % "0.11.1",
+    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.11.1",
     libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
   )
 
