@@ -37,7 +37,7 @@ trait AdvancementGenerator {
 
   def advancementFileMap: Map[String, String] =
     advancements
-      .map(a => s"assets/${a.fileName.domain}/advancements/${a.fileName.path}.json" -> a.asJson.pretty(ResourcePrinter))
+      .map(a => s"assets/${a.fileName.domain}/advancements/${a.fileName.path}.json" -> a.asJson.printWith(ResourcePrinter))
       .toMap
 
   def advancementCreateFiles(resources: Path): Unit = {

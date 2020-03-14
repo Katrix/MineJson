@@ -36,7 +36,7 @@ trait RecipeGenerator {
 
   def recipesFileMap: Map[String, String] =
     recipes
-      .map(a => s"assets/${a.fileName.domain}/recipes/${a.fileName.path}.json" -> a.toJson.pretty(ResourcePrinter))
+      .map(a => s"assets/${a.fileName.domain}/recipes/${a.fileName.path}.json" -> a.toJson.printWith(ResourcePrinter))
       .toMap
 
   def recipesCreateFiles(resources: Path): Unit = {

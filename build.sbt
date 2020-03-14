@@ -1,18 +1,26 @@
-import sbtcrossproject.CrossPlugin.autoImport.{crossProject, CrossType}
-
 lazy val sharedSettings = Seq(
-  organization := "net.katsstuff",
-  version      := "0.3",
-  scalaVersion := "2.12.8",
+  organization       := "net.katsstuff",
+  version            := "0.3.1",
+  scalaVersion       := "2.13.1",
+  crossScalaVersions := Seq("2.13.1", "2.12.8"),
   scalacOptions ++= Seq(
     "-deprecation",
     "-feature",
     "-unchecked",
-    "-Xlint",
-    "-Yno-adapted-args",
-    "-Ywarn-dead-code",
-    "-Ywarn-unused-import"
-  )
+    "-Xlint"
+  ),
+  scalacOptions ++= {
+    if (scalaVersion.value.startsWith("2.13"))
+      Seq(
+        "-Wdead-code",
+        "-Wunused:imports"
+      )
+    else
+      Seq(
+        "-Ywarn-dead-code",
+        "-Ywarn-unused-import"
+      )
+  }
 )
 
 lazy val publishSettings = Seq(
@@ -30,7 +38,7 @@ lazy val publishSettings = Seq(
     )
   ),
   homepage        := Some(url("https://github.com/Katrix/MineJson")),
-  developers      := List(Developer("Katrix", "Nikolai Frid", "katrix97@hotmail.com", url("http://katsstuff.net/"))),
+  developers      := List(Developer("Katrix", "Kathryn Frid", "katrix97@hotmail.com", url("http://katsstuff.net/"))),
   autoAPIMappings := true,
   publishTo := {
     val nexus = "https://oss.sonatype.org/"
@@ -47,11 +55,11 @@ lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
     sharedSettings,
     publishSettings,
     name                                   := "minejson-text",
-    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.5.0",
-    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.0",
-    libraryDependencies += "io.circe"      %%% "circe-core" % "0.11.1",
-    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.11.1",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.0.4" % Test
+    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.5.1",
+    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.1",
+    libraryDependencies += "io.circe"      %%% "circe-core" % "0.13.0",
+    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.13.0",
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
   )
 
 lazy val minejsonTextJVM = minejsonText.jvm
@@ -115,6 +123,7 @@ lazy val minejsonRoot =
       minejsonGeneratorJS
     )
     .settings(
+      sharedSettings,
       noPublishSettings,
       publishTo := {
         val nexus = "https://oss.sonatype.org/"

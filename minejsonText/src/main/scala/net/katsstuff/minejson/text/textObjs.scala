@@ -242,7 +242,7 @@ object Text {
       }
 
       if (builder.size == 1) builder.head
-      else Text.Empty.copyBase(children = Seq(builder: _*))
+      else Text.Empty.copyBase(children = builder.toSeq)
     }
 }
 

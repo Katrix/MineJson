@@ -56,7 +56,7 @@ object Advancement {
         "hidden"           := a.display.hidden
       ),
       "parent"       := a.parent.map(_.id),
-      "criteria"     := a.criteria.mapValues(_.toJson),
+      "criteria"     := a.criteria.map(t => t._1 -> t._2.toJson),
       "requirements" := a.requirements,
       "rewards" := a.rewards.map { rewards =>
         Json.obj(

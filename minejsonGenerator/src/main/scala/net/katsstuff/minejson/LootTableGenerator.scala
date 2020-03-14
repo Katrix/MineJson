@@ -37,7 +37,7 @@ trait LootTableGenerator {
 
   def lootTablesFileMap: Map[String, String] =
     lootTables
-      .map(a => s"assets/${a.fileName.domain}/loot_tables/${a.fileName.path}.json" -> a.asJson.pretty(ResourcePrinter))
+      .map(a => s"assets/${a.fileName.domain}/loot_tables/${a.fileName.path}.json" -> a.asJson.printWith(ResourcePrinter))
       .toMap
 
   def lootTablesCreateFiles(resources: Path): Unit = {
