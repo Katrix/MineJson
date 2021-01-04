@@ -45,23 +45,24 @@ object TextColor {
     */
   case object NoColor extends TextColor
 
-  case object Black       extends TextColor
-  case object DarkBlue    extends TextColor
-  case object DarkGreen   extends TextColor
-  case object DarkAqua    extends TextColor
-  case object DarkRed     extends TextColor
-  case object DarkPurple  extends TextColor
-  case object Gold        extends TextColor
-  case object Gray        extends TextColor
-  case object DarkGray    extends TextColor
-  case object Blue        extends TextColor
-  case object Green       extends TextColor
-  case object Aqua        extends TextColor
-  case object Red         extends TextColor
-  case object LightPurple extends TextColor
-  case object Yellow      extends TextColor
-  case object White       extends TextColor
-  case object Reset       extends TextColor
+  case object Black             extends TextColor
+  case object DarkBlue          extends TextColor
+  case object DarkGreen         extends TextColor
+  case object DarkAqua          extends TextColor
+  case object DarkRed           extends TextColor
+  case object DarkPurple        extends TextColor
+  case object Gold              extends TextColor
+  case object Gray              extends TextColor
+  case object DarkGray          extends TextColor
+  case object Blue              extends TextColor
+  case object Green             extends TextColor
+  case object Aqua              extends TextColor
+  case object Red               extends TextColor
+  case object LightPurple       extends TextColor
+  case object Yellow            extends TextColor
+  case object White             extends TextColor
+  case object Reset             extends TextColor
+  case class Hex(color: String) extends TextColor
 
   val AllColors =
     Seq(

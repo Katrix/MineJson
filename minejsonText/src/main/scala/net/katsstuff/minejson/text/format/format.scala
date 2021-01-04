@@ -54,7 +54,13 @@ object CompositeTextStyle {
   }
 }
 
-case class TextFormat(color: TextColor = TextColor.NoColor, style: CompositeTextStyle = CompositeTextStyle.None) {
+case class TextFont(font: Option[String])
+
+case class TextFormat(
+    color: TextColor = TextColor.NoColor,
+    style: CompositeTextStyle = CompositeTextStyle.None,
+    font: Option[String] = scala.None
+) {
 
   def combine(other: TextFormat): TextFormat = {
     val otherColor = other.color

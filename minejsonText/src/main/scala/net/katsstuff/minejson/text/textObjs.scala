@@ -156,6 +156,9 @@ object Text {
             hoverText = Some(newHover)
           case newInsertion: InsertionText =>
             insertionText = Some(newInsertion)
+          case newFont: TextFont =>
+            format = format.copy(font = newFont.font)
+
           case child: Text if child == Text.Empty => //Do nothing
           case child: Text =>
             builder.lastOption.flatMap(last => last.merge(child)) match {
@@ -212,6 +215,18 @@ object Text {
                   clickAction = onClick,
                   hoverText = hoverText,
                   insertionText = insertionText.map(_.content)
+                )
+              case ShowNBT(path, interpret, block, entity, storage) =>
+                NBTText(
+                  nbtPath = path,
+                  interpret = interpret,
+                  block = block,
+                  entity = entity,
+                  storage = storage,
+                  format = format,
+                  clickAction = onClick,
+                  hoverText = hoverText,
+                  insertionText = insertionText.map(_.content),
                 )
               case simple =>
                 LiteralText(
@@ -373,6 +388,43 @@ case class Keybind(key: String)
 
 final case class KeybindText(
     key: String,
+    format: TextFormat = TextFormat.None,
+    insertionText: Option[String] = None,
+    clickAction: Option[ClickAction] = None,
+    hoverText: Option[HoverText] = None,
+    children: Seq[Text] = Seq()
+) extends Text {
+  override def copyBase(
+      format: TextFormat = format,
+      insertionText: Option[String] = insertionText,
+      clickAction: Option[ClickAction] = clickAction,
+      hoverText: Option[HoverText] = hoverText,
+      children: Seq[Text] = children
+  ): Text = copy(
+    format = format,
+    insertionText = insertionText,
+    clickAction = clickAction,
+    hoverText = hoverText,
+    children = children
+  )
+
+  override def merge(other: Text): Option[Text] = None
+}
+
+case class ShowNBT(
+    path: String,
+    interpret: Boolean = false,
+    block: Option[String] = None,
+    entity: Option[String] = None,
+    storage: Option[String] = None
+)
+
+case class NBTText(
+    nbtPath: String,
+    interpret: Boolean = false,
+    block: Option[String] = None,
+    entity: Option[String] = None,
+    storage: Option[String] = None,
     format: TextFormat = TextFormat.None,
     insertionText: Option[String] = None,
     clickAction: Option[ClickAction] = None,

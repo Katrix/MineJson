@@ -30,7 +30,7 @@ import net.katsstuff.minejson.text.format.TextObject
 
 abstract class CodeSerializer extends TextSerializer {
 
-  val codesToObjects = Map(
+  val codesToObjects: Map[Char, TextObject] = Map(
     '0' -> Black,
     '1' -> DarkBlue,
     '2' -> DarkGreen,
@@ -55,7 +55,10 @@ abstract class CodeSerializer extends TextSerializer {
     'r' -> Reset
   )
 
-  val objectsToCodes: Map[TextObject, Char] = codesToObjects.map(_.swap)
+  def objectsToCodes(obj: TextObject): String =
+    codesToObjects.map(_.swap).get(obj).fold(defaultObjectToCode(obj))(_.toString)
+
+  def defaultObjectToCode(obj: TextObject): String = ""
 
   def codeChar: Char
 
@@ -63,8 +66,11 @@ abstract class CodeSerializer extends TextSerializer {
     val builder = new StringBuilder
 
     def inner(text: Text): Unit = {
-      if (text.format.color != NoColor) builder.append(s"$codeChar${objectsToCodes(text.format.color)}")
+      builder.append(codeChar.toString)
+      builder.append(objectsToCodes(Reset))
       for ((style, applied) <- text.format.style.styles if applied) builder.append(s"$codeChar${objectsToCodes(style)}")
+      builder.append(s"$codeChar${objectsToCodes(text.format.color)}")
+
       val rawContent = text match {
         case text: LiteralText                           => text.content
         case text: TranslateText                         => text.key.format(text.args: _*)
@@ -72,6 +78,7 @@ abstract class CodeSerializer extends TextSerializer {
         case ScoreText(name, _, None, _, _, _, _, _)     => name
         case text: SelectorText                          => text.selector
         case text: KeybindText                           => text.key
+        case text: NBTText                               => text.nbtPath
       }
       builder.append(rawContent)
 
@@ -87,17 +94,23 @@ abstract class CodeSerializer extends TextSerializer {
   override def deserializeThrow(string: String): Text = {
     val elements = string.split(codeChar).toSeq
 
-    val parts = for ((element, i) <- elements.zipWithIndex) yield {
-      if (element.isEmpty) Text.Empty
-      else if (codesToObjects.contains(element.head)) {
-        val obj = codesToObjects(element.head)
-        if (element.length == 1) obj //If there is just the code, just return the obj itself
-        else t"$obj${element.tail}"
-      } else if (i != 0)
-        t"$codeChar$element" //The first element may not have a charCode before it, so we treat it for itself
-      else t"$element"
-    }
+    elements.zipWithIndex
+      .foldLeft((TextFormat.None, Text.Empty)) {
+        case ((format, acc), (element, i)) =>
+          if (element.isEmpty) (format, Text(acc, codeChar.toString))
+          else if (i == 0) (TextFormat.None, Text(element))
+          else if (codesToObjects.contains(element.head)) {
+            val newFormat = codesToObjects(element.head) match {
+              case Reset            => TextFormat.None.copy(color = Reset)
+              case style: TextStyle => format.copy(style = format.style + ((style, true)))
+              case color: TextColor =>
+                format.copy(color = color, style = CompositeTextStyle.None) //Setting a color resets the style
+            }
 
-    Text(parts: _*)
+            if (element.length == 1) newFormat -> acc
+            else newFormat                     -> Text(acc, newFormat, element.tail)
+          } else format -> Text(acc, format, codeChar.toString, element)
+      }
+      ._2
   }
 }

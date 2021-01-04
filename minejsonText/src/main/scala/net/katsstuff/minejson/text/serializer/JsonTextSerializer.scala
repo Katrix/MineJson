@@ -54,6 +54,14 @@ object JsonTextSerializer extends TextSerializer {
         )
       case text: SelectorText => Seq("selector" := text.selector)
       case text: KeybindText  => Seq("keybind"  := text.key)
+      case text: NBTText =>
+        Seq(
+          "nbt"       := text.nbtPath,
+          "interpret" := text.interpret,
+          "block"     := text.block,
+          "entity"    := text.entity,
+          "storage"   := text.storage
+        )
     }
 
     Json.obj(extra ++ common: _*)
@@ -100,30 +108,34 @@ object JsonTextSerializer extends TextSerializer {
     case TextColor.Yellow      => "yellow".asJson
     case TextColor.White       => "white".asJson
     case TextColor.Reset       => "reset".asJson
+    case TextColor.Hex(color)  => s"#$color".asJson
   }
+
+  private val hexPattern = """#(\d{6})""".r
 
   implicit val colorDecoder: Decoder[TextColor] = (c: HCursor) => {
     if (c.value.isNull) Right(TextColor.NoColor)
     else {
       c.as[String].flatMap {
-        case "black"        => Right(TextColor.Black)
-        case "dark_blue"    => Right(TextColor.DarkBlue)
-        case "dark_green"   => Right(TextColor.DarkGreen)
-        case "dark_aqua"    => Right(TextColor.DarkAqua)
-        case "dark_red"     => Right(TextColor.DarkRed)
-        case "dark_purple"  => Right(TextColor.DarkPurple)
-        case "gold"         => Right(TextColor.Gold)
-        case "gray"         => Right(TextColor.Gray)
-        case "dark_gray"    => Right(TextColor.DarkGray)
-        case "blue"         => Right(TextColor.Blue)
-        case "green"        => Right(TextColor.Green)
-        case "aqua"         => Right(TextColor.Aqua)
-        case "red"          => Right(TextColor.Red)
-        case "light_purple" => Right(TextColor.LightPurple)
-        case "yellow"       => Right(TextColor.Yellow)
-        case "white"        => Right(TextColor.White)
-        case "reset"        => Right(TextColor.Reset)
-        case other          => Left(DecodingFailure(s"$other is not a valid color", c.history))
+        case "black"           => Right(TextColor.Black)
+        case "dark_blue"       => Right(TextColor.DarkBlue)
+        case "dark_green"      => Right(TextColor.DarkGreen)
+        case "dark_aqua"       => Right(TextColor.DarkAqua)
+        case "dark_red"        => Right(TextColor.DarkRed)
+        case "dark_purple"     => Right(TextColor.DarkPurple)
+        case "gold"            => Right(TextColor.Gold)
+        case "gray"            => Right(TextColor.Gray)
+        case "dark_gray"       => Right(TextColor.DarkGray)
+        case "blue"            => Right(TextColor.Blue)
+        case "green"           => Right(TextColor.Green)
+        case "aqua"            => Right(TextColor.Aqua)
+        case "red"             => Right(TextColor.Red)
+        case "light_purple"    => Right(TextColor.LightPurple)
+        case "yellow"          => Right(TextColor.Yellow)
+        case "white"           => Right(TextColor.White)
+        case "reset"           => Right(TextColor.Reset)
+        case hexPattern(color) => Right(TextColor.Hex(color))
+        case other             => Left(DecodingFailure(s"$other is not a valid color", c.history))
       }
     }
   }
@@ -138,6 +150,11 @@ object JsonTextSerializer extends TextSerializer {
         "action" := "open_url",
         "value"  := url
       )
+    case ClickAction.OpenFile(file) =>
+      Json.obj(
+        "action" := "open_file",
+        "value"  := file
+      )
     case ClickAction.RunCommand(command) =>
       Json.obj(
         "action" := "run_command",
@@ -148,15 +165,28 @@ object JsonTextSerializer extends TextSerializer {
         "action" := "suggest_command",
         "value"  := command
       )
+    case ClickAction.ChangePage(page) =>
+      Json.obj(
+        "action" := "change_page",
+        "value"  := page
+      )
+    case ClickAction.CopyToClipboard(value) =>
+      Json.obj(
+        "action" := "copy_to_clipboard",
+        "value"  := value
+      )
   }
 
   implicit val clickActionDecoder: Decoder[ClickAction] = (c: HCursor) => {
     c.get[String]("value").flatMap { value =>
       c.get[String]("action").flatMap {
-        case "open_url"        => Right(ClickAction.OpenUrl(value))
-        case "run_command"     => Right(ClickAction.RunCommand(value))
-        case "suggest_command" => Right(ClickAction.SuggestCommand(value))
-        case other             => Left(DecodingFailure(s"$other is not a valid click action", c.downField("action").history))
+        case "open_url"          => Right(ClickAction.OpenUrl(value))
+        case "open_file"         => Right(ClickAction.OpenFile(value))
+        case "run_command"       => Right(ClickAction.RunCommand(value))
+        case "suggest_command"   => Right(ClickAction.SuggestCommand(value))
+        case "change_page"       => Right(ClickAction.ChangePage(value))
+        case "copy_to_clipboard" => Right(ClickAction.CopyToClipboard(value))
+        case other               => Left(DecodingFailure(s"$other is not a valid click action", c.downField("action").history))
       }
     }
   }

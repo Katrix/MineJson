@@ -43,6 +43,9 @@ package object text {
   val Obfuscated: format.TextStyle.Obfuscated.type = format.TextStyle.Obfuscated
   type Obfuscated = format.TextStyle.Obfuscated.type
 
+  val TextFont: format.TextFont.type = format.TextFont
+  type TextFont = format.TextFont
+
   //Colors
 
   val TextColor: format.TextColor.type = format.TextColor
@@ -101,6 +104,9 @@ package object text {
 
   val Reset: format.TextColor.Reset.type = format.TextColor.Reset
   type Reset = format.TextColor.Reset.type
+
+  val Hex: format.TextColor.Hex.type = format.TextColor.Hex
+  type Hex = format.TextColor.Hex
 
   implicit class TextSyntax(private val sc: StringContext) extends AnyVal {
 

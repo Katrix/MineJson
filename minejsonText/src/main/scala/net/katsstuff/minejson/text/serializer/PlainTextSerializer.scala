@@ -38,6 +38,7 @@ object PlainTextSerializer extends TextSerializer {
       case ScoreText(name, _, None, _, _, _, _, _)     => name
       case text: SelectorText                          => text.selector
       case text: KeybindText                           => text.key
+      case text: NBTText                               => text.nbtPath
     }
     s"$content$childrenContent"
   }

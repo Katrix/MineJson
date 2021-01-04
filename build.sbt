@@ -1,8 +1,8 @@
 lazy val sharedSettings = Seq(
   organization       := "net.katsstuff",
-  version            := "0.3.1",
-  scalaVersion       := "2.13.1",
-  crossScalaVersions := Seq("2.13.1", "2.12.8"),
+  version            := "0.3.2",
+  scalaVersion       := "2.13.4",
+  crossScalaVersions := Seq("2.13.4", "2.12.10"),
   scalacOptions ++= Seq(
     "-deprecation",
     "-feature",
@@ -59,7 +59,7 @@ lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
     libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.1",
     libraryDependencies += "io.circe"      %%% "circe-core" % "0.13.0",
     libraryDependencies += "io.circe"      %%% "circe-parser" % "0.13.0",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.1.1" % Test
+    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.3" % Test
   )
 
 lazy val minejsonTextJVM = minejsonText.jvm
