@@ -49,79 +49,21 @@ lazy val publishSettings = Seq(
 
 lazy val noPublishSettings = Seq(publish := {}, publishLocal := {}, publishArtifact := false)
 
-lazy val minejsonText = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .settings(
-    sharedSettings,
-    publishSettings,
-    name                                   := "minejson-text",
-    libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.5.1",
-    libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.1",
-    libraryDependencies += "io.circe"      %%% "circe-core" % "0.13.0",
-    libraryDependencies += "io.circe"      %%% "circe-parser" % "0.13.0",
-    libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.3" % Test
-  )
-
-lazy val minejsonTextJVM = minejsonText.jvm
-lazy val minejsonTextJS  = minejsonText.js
-
-lazy val minejsonBase = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .settings(sharedSettings, publishSettings, name := "minejson-base")
-  .dependsOn(minejsonText)
-
-lazy val minejsonBaseJVM = minejsonBase.jvm
-lazy val minejsonBaseJS  = minejsonBase.js
-
-lazy val minejsonAdvancement = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .settings(sharedSettings, publishSettings, name := "minejson-advancement")
-  .dependsOn(minejsonLootTable, minejsonRecipe)
-
-lazy val minejsonAdvancementJVM = minejsonAdvancement.jvm
-lazy val minejsonAdvancementJS  = minejsonAdvancement.js
-
-lazy val minejsonLootTable = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .settings(sharedSettings, publishSettings, name := "minejson-loottable")
-  .dependsOn(minejsonBase)
-
-lazy val minejsonLootTableJVM = minejsonLootTable.jvm
-lazy val minejsonLootTableJS  = minejsonLootTable.js
-
-lazy val minejsonRecipe = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .settings(sharedSettings, publishSettings, name := "minejson-recipe")
-  .dependsOn(minejsonBase)
-
-lazy val minejsonRecipeJVM = minejsonRecipe.jvm
-lazy val minejsonRecipeJS  = minejsonRecipe.js
-
-lazy val minejsonGenerator = crossProject(JSPlatform, JVMPlatform)
-  .crossType(CrossType.Pure)
-  .settings(sharedSettings, publishSettings, name := "minejson-generator")
-  .dependsOn(minejsonAdvancement, minejsonLootTable, minejsonRecipe)
-
-lazy val minejsonGeneratorJVM = minejsonGenerator.jvm
-lazy val minejsonGeneratorJS  = minejsonGenerator.js
+lazy val minejsonText = project.settings(
+  sharedSettings,
+  publishSettings,
+  name                                   := "minejson-text",
+  libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.5.1",
+  libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.1",
+  libraryDependencies += "io.circe"      %%% "circe-core" % "0.13.0",
+  libraryDependencies += "io.circe"      %%% "circe-parser" % "0.13.0",
+  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.3" % Test
+)
 
 lazy val minejsonRoot =
   project
     .in(file("."))
-    .aggregate(
-      minejsonTextJVM,
-      minejsonTextJS,
-      minejsonBaseJVM,
-      minejsonBaseJS,
-      minejsonAdvancementJVM,
-      minejsonAdvancementJS,
-      minejsonLootTableJVM,
-      minejsonLootTableJS,
-      minejsonRecipeJVM,
-      minejsonRecipeJS,
-      minejsonGeneratorJVM,
-      minejsonGeneratorJS
-    )
+    .aggregate(minejsonText)
     .settings(
       sharedSettings,
       noPublishSettings,
