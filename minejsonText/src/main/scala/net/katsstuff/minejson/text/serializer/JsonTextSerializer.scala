@@ -25,12 +25,11 @@ package net.katsstuff.minejson.text.serializer
 
 import scala.util.Try
 
+import cats.syntax.either._
 import io.circe._
 import io.circe.syntax._
-import io.circe.parser
-import cats.syntax.either._
 import net.katsstuff.minejson.text._
-import net.katsstuff.typenbt.{Mojangson, NBTCompound}
+import net.katsstuff.typenbt.Mojangson
 
 object JsonTextSerializer extends TextSerializer {
 
@@ -213,26 +212,21 @@ object JsonTextSerializer extends TextSerializer {
     def nbtValue =
       c.get[String]("value")
         .flatMap { s =>
-          Either
-            .catchNonFatal(Mojangson.deserialize(s).get)
-            .leftMap(e => DecodingFailure(e.getMessage, c.downField("value").history))
-            .map(_.value)
-        }
-        .flatMap {
-          case compound: NBTCompound => Right(compound)
-          case other =>
-            Left(
+          Mojangson
+            .deserialize(s)
+            .leftMap { e =>
+              val expectation = e.expected.map(_.context.mkString("[", ", ", "]")).toList.mkString(", ")
               DecodingFailure(
-                s"Found invalid json type for hover action ${other.nbtType.id}",
+                s"Failed decoding nbt at ${e.failedAtOffset}. Expected: $expectation",
                 c.downField("value").history
               )
-            )
+            }
         }
 
     c.get[String]("action").flatMap {
-      case "show_text"   => c.get[Text]("value").map(HoverText.ShowText)
-      case "show_item"   => nbtValue.map(HoverText.ShowItem)
-      case "show_entity" => nbtValue.map(HoverText.ShowItem)
+      case "show_text"   => c.get[Text]("value").map(HoverText.ShowText.apply)
+      case "show_item"   => nbtValue.map(HoverText.ShowItem.apply)
+      case "show_entity" => nbtValue.map(HoverText.ShowItem.apply)
       case other         => Left(DecodingFailure(s"$other is not a valid hover action", c.downField("action").history))
     }
   }

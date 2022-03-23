@@ -288,7 +288,8 @@ final case class LiteralText(
     else if (other == Text.Empty) Some(this)
     else {
       other match {
-        case LiteralText(otherContent, `format`, `insertionText`, `clickAction`, `hoverText`, otherChildren) =>
+        case LiteralText(otherContent, `format`, `insertionText`, `clickAction`, hoverText, otherChildren)
+            if hoverText == this.hoverText =>
           if (children.isEmpty) {
             Some(copy(content + otherContent, children = otherChildren))
           } else if (otherChildren.isEmpty) {

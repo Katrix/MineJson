@@ -1,31 +1,33 @@
 lazy val sharedSettings = Seq(
   organization       := "net.katsstuff",
   version            := "0.3.2",
-  scalaVersion       := "2.13.4",
-  crossScalaVersions := Seq("2.13.4", "2.12.10"),
+  scalaVersion       := "2.13.8",
+  crossScalaVersions := Seq("2.13.8", "2.12.15", "3.1.1"),
   scalacOptions ++= Seq(
     "-deprecation",
     "-feature",
     "-unchecked",
-    "-Xlint"
   ),
   scalacOptions ++= {
     if (scalaVersion.value.startsWith("2.13"))
       Seq(
         "-Wdead-code",
-        "-Wunused:imports"
+        "-Wunused:imports",
+        "-Xlint"
       )
-    else
+    else if (scalaVersion.value.startsWith("2."))
       Seq(
         "-Ywarn-dead-code",
-        "-Ywarn-unused-import"
+        "-Ywarn-unused-import",
+        "-Xlint"
       )
+    else Nil
   }
 )
 
 lazy val publishSettings = Seq(
   publishMavenStyle       := true,
-  publishArtifact in Test := false,
+  Test / publishArtifact := false,
   pomIncludeRepository := { _ =>
     false
   },
@@ -53,11 +55,11 @@ lazy val minejsonText = project.settings(
   sharedSettings,
   publishSettings,
   name                                   := "minejson-text",
-  libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.5.1",
-  libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.5.1",
-  libraryDependencies += "io.circe"      %%% "circe-core" % "0.13.0",
-  libraryDependencies += "io.circe"      %%% "circe-parser" % "0.13.0",
-  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.3" % Test
+  libraryDependencies += "net.katsstuff" %%% "typenbt" % "0.6.0",
+  libraryDependencies += "net.katsstuff" %%% "typenbt-mojangson" % "0.6.0",
+  libraryDependencies += "io.circe"      %%% "circe-core" % "0.14.1",
+  libraryDependencies += "io.circe"      %%% "circe-parser" % "0.14.1",
+  libraryDependencies += "org.scalatest" %% "scalatest" % "3.2.11" % Test
 )
 
 lazy val minejsonRoot =
