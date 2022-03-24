@@ -1,8 +1,8 @@
 lazy val sharedSettings = Seq(
   organization       := "net.katsstuff",
-  version            := "0.3.2",
+  version            := "0.4.0",
   scalaVersion       := "2.13.8",
-  crossScalaVersions := Seq("2.13.8", "2.12.15", "3.1.1"),
+  crossScalaVersions := Seq("2.13.8", "2.12.15", "3.1.0"),
   scalacOptions ++= Seq(
     "-deprecation",
     "-feature",
